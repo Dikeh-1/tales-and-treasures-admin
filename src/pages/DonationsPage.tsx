@@ -12,6 +12,10 @@ import {
   CardContent,
   CardActions,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import {
   DataGrid,
