@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 import {
   DataGrid,
-  GridActionsCellItem,
 } from '@mui/x-data-grid';
 import CancelIcon from '@mui/icons-material/Cancel';
 import apiClient from '../api/apiClient';
@@ -118,24 +117,27 @@ export default function SubscriptionsPage() {
     },
     {
       field: 'actions',
-      type: 'actions',
       headerName: 'Actions',
-      width: 100,
-      getActions: (params) => {
+      width: 140,
+      sortable: false,
+      renderCell: (params) => {
         const isActive = String(params.row.status).toLowerCase() === 'active';
         if (isActive) {
-          return [
-            <GridActionsCellItem
-              key="disable"
-              icon={<CancelIcon color="error" />}
-              label="Disable"
+          return (
+            <Button
+              size="small"
+              color="error"
+              variant="outlined"
+              startIcon={<CancelIcon fontSize="small" />}
               onClick={() => handleDisableClick(params.id)}
               disabled={disabling}
-              showInMenu={false}
-            />,
-          ];
+              sx={{ textTransform: 'none' }}
+            >
+              Disable
+            </Button>
+          );
         }
-        return [];
+        return null;
       },
     },
   ];

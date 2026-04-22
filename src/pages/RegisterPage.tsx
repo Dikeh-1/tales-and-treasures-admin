@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -13,6 +13,11 @@ import {
   Link,
   InputAdornment,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -20,11 +25,11 @@ import { toast } from 'react-hot-toast';
 import apiClient from '../api/apiClient';
 import { startRegistration } from '@simplewebauthn/browser';
 import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/types';
-import { Fingerprint, CheckCircle } from 'lucide-react';
+import { Fingerprint, CheckCircle, Fingerprint as FingerprintIcon, CameraFront } from 'lucide-react';
 import '../styles/AuthPages.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 
-const steps = ['Enter Details', 'Verify Email', 'Configure Access', 'Success'];
+const steps = ['Details', 'Verify Email', 'Fingerprint', 'Face Capture', 'Success'];
 
 function isStrongEnough(password: string) {
   return password.length >= 8 && /[A-Za-z]/.test(password) && /\d/.test(password);
@@ -36,6 +41,9 @@ function getErrorMessage(error: unknown, fallback: string) {
 }
 
 export default function RegistrationPage(): JSX.Element {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [activeStep, setActiveStep] = useState<number>(0);
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -46,13 +54,29 @@ export default function RegistrationPage(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const [resendDisabled, setResendDisabled] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(30);
-  const [registrationOptions, setRegistrationOptions] = useState<unknown>(null);
-  const [biometricRegistered, setBiometricRegistered] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [disclaimerOpen, setDisclaimerOpen] = useState<boolean>(false);
 
   const countdownRef = useRef<number | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Resume registration if redirected from Login
+  useEffect(() => {
+    const state = location.state as { email?: string; phase?: string };
+    if (state?.email) {
+      setEmail(state.email);
+    }
+    if (state?.phase) {
+      if (state.phase === 'PENDING_EMAIL') setActiveStep(1);
+      if (state.phase === 'PENDING_FINGERPRINT') {
+        setActiveStep(2);
+        setDisclaimerOpen(true);
+      }
+      if (state.phase === 'PENDING_FACE') setActiveStep(3);
+      if (state.phase === 'COMPLETED') setActiveStep(4);
+    }
+  }, [location]);
 
   useEffect(() => {
     return () => {
@@ -99,10 +123,10 @@ export default function RegistrationPage(): JSX.Element {
     setError('');
     setLoading(true);
     try {
-      const response = await apiClient.post('/auth/verify-email', { email, code });
-      setRegistrationOptions(response.data?.registrationOptions || null);
+      await apiClient.post('/auth/verify-email', { email, code });
       toast.success('Email verified! Configure access options next.');
       setActiveStep(2);
+      setDisclaimerOpen(true); // Show disclaimer before moving to fingerprint
     } catch (err) {
       setError(getErrorMessage(err, 'Verification failed.'));
     } finally {
@@ -121,9 +145,7 @@ export default function RegistrationPage(): JSX.Element {
       countdownRef.current = window.setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
-            if (countdownRef.current) {
-              window.clearInterval(countdownRef.current);
-            }
+            if (countdownRef.current) window.clearInterval(countdownRef.current);
             return 0;
           }
           return prev - 1;
@@ -134,60 +156,73 @@ export default function RegistrationPage(): JSX.Element {
     } catch (err) {
       setError(getErrorMessage(err, 'Failed to resend code.'));
       setResendDisabled(false);
-      if (countdownRef.current) {
-        window.clearInterval(countdownRef.current);
-      }
+      if (countdownRef.current) window.clearInterval(countdownRef.current);
     }
   };
 
-  const handleBiometricRegister = async () => {
+  const handleCancelDisclaimer = () => {
+    setDisclaimerOpen(false);
+    toast.error('Session terminated. You must use a compatible device.');
+    navigate('/login');
+  };
+
+  const handleAgreeDisclaimer = () => {
+    setDisclaimerOpen(false);
+  };
+
+  const handleBiometricRegister = async (type: 'fingerprint' | 'face') => {
     setLoading(true);
     setError('');
     try {
-      if (!registrationOptions) {
-        throw new Error('Registration options not found. Please restart registration.');
-      }
-
+      const optionsRes = await apiClient.post('/auth/biometric-options', { email });
+      
       const attestation = await startRegistration({
-        optionsJSON:
-          registrationOptions as PublicKeyCredentialCreationOptionsJSON,
+        optionsJSON: optionsRes.data as PublicKeyCredentialCreationOptionsJSON,
       });
-      await apiClient.post('/auth/verify-registration', {
+
+      const verifyRes = await apiClient.post('/auth/verify-registration', {
         email,
         attestationResponse: attestation,
       });
 
-      setBiometricRegistered(true);
-      toast.success('Biometric login has been enabled.');
+      const phase = verifyRes.data.phase;
+      toast.success(`${type === 'fingerprint' ? 'Fingerprint' : 'Face'} configured successfully!`);
+
+      if (phase === 'PENDING_FACE') {
+        setActiveStep(3);
+      } else if (phase === 'COMPLETED') {
+        setActiveStep(4);
+      }
     } catch (err) {
-      setError(getErrorMessage(err, 'Biometric registration failed.'));
+      setError(getErrorMessage(err, 'Biometric configuration failed.'));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFinish = () => {
-    setActiveStep(3);
-  };
-
   const overlayMessage = (() => {
     if (activeStep === 0) return 'Creating account...';
     if (activeStep === 1) return 'Verifying email...';
-    if (activeStep === 2) return 'Configuring security...';
-    return 'Finalizing registration...';
+    if (activeStep === 2) return 'Awaiting fingerprint...';
+    if (activeStep === 3) return 'Awaiting face scan...';
+    return 'Finalizing...';
   })();
 
   return (
     <Box className="auth-container">
-      <div className="auth-background"></div>
-
-      <Box className="auth-panel branding-panel">
-        <Box>
+      <Box className="auth-panel branding-panel" sx={{
+        backgroundImage: 'linear-gradient(rgba(10, 79, 102, 0.7), rgba(6, 43, 56, 0.9)), url("https://images.unsplash.com/photo-1497604401993-f2e9ce748969?auto=format&fit=crop&q=80&w=2000")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}>
+        <Box sx={{ zIndex: 2, position: 'relative' }}>
           <Typography className="branding-logo">Tales & Treasures</Typography>
-          <Typography variant="h2" className="branding-quote">
-            Calm systems. Clear impact. Better literacy outcomes.
+          <Typography variant="h2" className="branding-quote" sx={{ color: '#fff', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+            Calm systems. Clear impact.
           </Typography>
-          <Typography className="branding-author">Securely set up your admin workspace.</Typography>
+          <Typography className="branding-author" sx={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
+            Securely set up your admin workspace with mandatory 3-factor access.
+          </Typography>
         </Box>
       </Box>
 
@@ -198,17 +233,20 @@ export default function RegistrationPage(): JSX.Element {
           <Typography component="h1" variant="h4" align="center" className="auth-title">
             Admin Registration
           </Typography>
+          <Typography align="center" color="text.secondary" sx={{ mb: 2 }}>
+            Complete all steps to secure your account.
+          </Typography>
 
           <Stepper
             activeStep={activeStep}
             className="auth-stepper"
             sx={{
-              pt: 3,
-              pb: 5,
+              pt: 2,
+              pb: 4,
               flexWrap: 'wrap',
               gap: { xs: 1, sm: 2 },
               '& .MuiStepLabel-label': {
-                fontSize: { xs: '0.8rem', sm: '0.95rem', md: '1.2rem' },
+                fontSize: { xs: '0.75rem', sm: '0.9rem' },
                 textAlign: 'center',
               },
             }}
@@ -286,8 +324,8 @@ export default function RegistrationPage(): JSX.Element {
               />
               {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
-                <Button variant="contained" type="submit" disabled={loading}>
-                  {loading ? <CircularProgress size={20} /> : 'Next'}
+                <Button variant="contained" type="submit" disabled={loading} size="large">
+                  {loading ? <CircularProgress size={20} /> : 'Continue Setup'}
                 </Button>
               </Box>
             </Box>
@@ -318,8 +356,8 @@ export default function RegistrationPage(): JSX.Element {
                 <Button onClick={() => void handleResend()} disabled={resendDisabled} size="small">
                   {resendDisabled ? `Resend in ${countdown}s` : 'Resend Code'}
                 </Button>
-                <Button variant="contained" type="submit" disabled={loading}>
-                  {loading ? <CircularProgress size={20} /> : 'Verify'}
+                <Button variant="contained" type="submit" disabled={loading} size="large">
+                  {loading ? <CircularProgress size={20} /> : 'Verify Email'}
                 </Button>
               </Box>
             </Box>
@@ -327,35 +365,23 @@ export default function RegistrationPage(): JSX.Element {
 
           {activeStep === 2 && (
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>
-                Account Access Setup
+              <Typography variant="h5" sx={{ mb: 2 }}>
+                Step 2: Fingerprint Configuration
               </Typography>
-              <Typography color="text.secondary" sx={{ mb: 3 }}>
-                Your password has been set. You can optionally enable biometric login now.
+              <Typography color="text.secondary" sx={{ mb: 4 }}>
+                For absolute security, we require you to register a physical fingerprint on this device.
               </Typography>
 
               <Button
-                onClick={() => void handleBiometricRegister()}
+                onClick={() => void handleBiometricRegister('fingerprint')}
                 variant="contained"
                 size="large"
-                startIcon={<Fingerprint />}
-                disabled={loading || biometricRegistered}
-                sx={{ mr: 1, mb: 1 }}
+                fullWidth
+                startIcon={<FingerprintIcon />}
+                disabled={loading}
+                sx={{ mb: 2, py: 1.5 }}
               >
-                {loading
-                  ? <CircularProgress size={20} color="inherit" />
-                  : biometricRegistered
-                    ? 'Biometric Enabled'
-                    : 'Enable Face/Fingerprint'}
-              </Button>
-
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={handleFinish}
-                sx={{ mb: 1 }}
-              >
-                {biometricRegistered ? 'Continue' : 'Skip For Now'}
+                Scan Fingerprint
               </Button>
 
               {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
@@ -363,21 +389,46 @@ export default function RegistrationPage(): JSX.Element {
           )}
 
           {activeStep === 3 && (
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="h5" sx={{ mb: 2 }}>
+                Step 3: Face Capture Configuration
+              </Typography>
+              <Typography color="text.secondary" sx={{ mb: 4 }}>
+                Finally, register your face capture. This acts as your third authentication factor.
+              </Typography>
+
+              <Button
+                onClick={() => void handleBiometricRegister('face')}
+                variant="contained"
+                size="large"
+                fullWidth
+                startIcon={<CameraFront />}
+                disabled={loading}
+                sx={{ mb: 2, py: 1.5 }}
+              >
+                Scan Face
+              </Button>
+
+              {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
+            </Box>
+          )}
+
+          {activeStep === 4 && (
             <Box sx={{ textAlign: 'center', p: 3 }}>
               <CheckCircle size={64} style={{ color: '#34d399', marginBottom: '16px' }} />
               <Typography variant="h5" gutterBottom className="auth-title">
-                Registration Successful!
+                Configuration Complete!
               </Typography>
               <Typography className="auth-subtitle">
-                Welcome aboard, Admin <strong>{name.split(' ')[0]}</strong>!
+                Welcome aboard, Admin. All 3 factors are strictly secured.
               </Typography>
-              <Button component={RouterLink} to="/login" variant="contained" sx={{ mt: 3 }}>
-                Proceed to Login
+              <Button component={RouterLink} to="/login" variant="contained" size="large" fullWidth sx={{ mt: 4 }}>
+                Proceed to Secure Login
               </Button>
             </Box>
           )}
 
-          {activeStep < 3 && (
+          {activeStep < 4 && (
             <Typography variant="body2" align="center" className="auth-link-text">
               Already have an account?{' '}
               <Link component={RouterLink} to="/login" variant="body2">
@@ -387,6 +438,28 @@ export default function RegistrationPage(): JSX.Element {
           )}
         </Box>
       </Box>
+
+      <Dialog open={disclaimerOpen} onClose={handleCancelDisclaimer} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ color: 'error.main', fontWeight: 'bold' }}>
+          ⚠️ Strict Hardware Requirements
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            To proceed with registration, this device <strong>MUST</strong> be equipped with a hardware <strong>Fingerprint Sensor</strong> and a <strong>Camera</strong>.
+          </Typography>
+          <DialogContentText>
+            If your current device does not have these sensors, please click <strong>Cancel</strong>, and resume this registration on a compatible device (e.g., your smartphone or a modern laptop) by simply logging in.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={handleCancelDisclaimer} color="inherit">
+            Cancel & Terminate
+          </Button>
+          <Button onClick={handleAgreeDisclaimer} variant="contained" color="error" size="large">
+            I Agree, I Have A Fingerprint Sensor
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

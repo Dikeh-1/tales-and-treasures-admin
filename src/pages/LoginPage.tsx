@@ -122,6 +122,17 @@ export default function LoginPage() {
         assertionResponse: assertion,
       });
 
+      if (verifyRes.data.requiresConfiguration) {
+        toast.error(verifyRes.data.message || 'Please complete account configuration.');
+        navigate('/register', { 
+           state: { 
+             email: verifyRes.data.email, 
+             phase: verifyRes.data.phase 
+           } 
+        });
+        return;
+      }
+
       auth.login(
         verifyRes.data.user,
         verifyRes.data.accessToken,
@@ -160,6 +171,17 @@ export default function LoginPage() {
         email: normalizedEmail,
         password,
       });
+
+      if (response.data.requiresConfiguration) {
+        toast.error(response.data.message || 'Please complete account configuration.');
+        navigate('/register', { 
+           state: { 
+             email: response.data.email, 
+             phase: response.data.phase 
+           } 
+        });
+        return;
+      }
 
       auth.login(
         response.data.user,
@@ -319,13 +341,17 @@ export default function LoginPage() {
     <Box className="auth-container">
       <div className="auth-background"></div>
 
-      <Box className="auth-panel branding-panel">
-        <Box>
+      <Box className="auth-panel branding-panel" sx={{
+        backgroundImage: 'linear-gradient(rgba(10, 79, 102, 0.7), rgba(6, 43, 56, 0.9)), url("https://images.unsplash.com/photo-1497604401993-f2e9ce748969?auto=format&fit=crop&q=80&w=2000")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}>
+        <Box sx={{ zIndex: 2, position: 'relative' }}>
           <Typography className="branding-logo">Tales & Treasures</Typography>
-          <Typography variant="h2" className="branding-quote">
+          <Typography variant="h2" className="branding-quote" sx={{ color: '#fff', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
             Calm control for the work that changes children’s stories.
           </Typography>
-          <Typography className="branding-author">
+          <Typography className="branding-author" sx={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
             Secure admin access for operations, outreach, and impact.
           </Typography>
         </Box>
@@ -375,25 +401,40 @@ export default function LoginPage() {
             {authMode === 'login' && !needsBiometricSetup && (
               <Box
                 className="auth-method-toggle"
-                sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, mb: 2 }}
+                sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 1, mb: 2 }}
               >
-                <Button
-                  variant={authMethod === 'biometric' ? 'contained' : 'outlined'}
-                  onClick={() => {
-                    setAuthMethod('biometric');
-                    setError('');
-                  }}
-                >
-                  Biometric
-                </Button>
                 <Button
                   variant={authMethod === 'password' ? 'contained' : 'outlined'}
                   onClick={() => {
                     setAuthMethod('password');
                     setError('');
                   }}
+                  startIcon={<KeyRound />}
+                  fullWidth
                 >
-                  Password
+                  Sign in with Password
+                </Button>
+                <Button
+                  variant={authMethod === 'biometric' ? 'contained' : 'outlined'}
+                  onClick={() => {
+                    setAuthMethod('biometric');
+                    setError('');
+                  }}
+                  startIcon={<Fingerprint />}
+                  fullWidth
+                >
+                  Sign in with Fingerprint
+                </Button>
+                <Button
+                  variant={authMethod === 'biometric' ? 'contained' : 'outlined'}
+                  onClick={() => {
+                    setAuthMethod('biometric');
+                    setError('');
+                  }}
+                  startIcon={<UserPlus />}
+                  fullWidth
+                >
+                  Sign in with Face Capture
                 </Button>
               </Box>
             )}
@@ -452,17 +493,43 @@ export default function LoginPage() {
               />
             )}
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
-              disabled={loading}
-              startIcon={buttonIcon}
-            >
-              {loading ? <CircularProgress size={24} color="inherit" /> : buttonLabel}
-            </Button>
+            {authMode === 'verifyDevice' && (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                sx={{ mt: 3, mb: 2, py: 1.5 }}
+                disabled={loading}
+                startIcon={buttonIcon}
+              >
+                {loading ? <CircularProgress size={24} color="inherit" /> : buttonLabel}
+              </Button>
+            )}
+            {authMode === 'login' && needsBiometricSetup && (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                sx={{ mt: 3, mb: 2, py: 1.5 }}
+                disabled={loading}
+                startIcon={<UserPlus />}
+              >
+                {loading ? <CircularProgress size={24} color="inherit" /> : 'Register Biometrics'}
+              </Button>
+            )}
+            {authMode === 'login' && !needsBiometricSetup && (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                sx={{ mt: 3, mb: 2, py: 1.5, display: 'none' }}
+              >
+                Hidden Submit
+              </Button>
+            )}
 
             {error && (
               <Alert severity="error" sx={{ mt: 2 }}>
