@@ -25,7 +25,7 @@ import { toast } from 'react-hot-toast';
 import apiClient from '../api/apiClient';
 import { startRegistration } from '@simplewebauthn/browser';
 import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/types';
-import { Fingerprint, CheckCircle, Fingerprint as FingerprintIcon, CameraFront } from 'lucide-react';
+import { Fingerprint, CheckCircle, ScanFace } from 'lucide-react';
 import '../styles/AuthPages.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 
@@ -377,7 +377,7 @@ export default function RegistrationPage(): JSX.Element {
                 variant="contained"
                 size="large"
                 fullWidth
-                startIcon={<FingerprintIcon />}
+                startIcon={<Fingerprint />}
                 disabled={loading}
                 sx={{ mb: 2, py: 1.5 }}
               >
@@ -402,7 +402,7 @@ export default function RegistrationPage(): JSX.Element {
                 variant="contained"
                 size="large"
                 fullWidth
-                startIcon={<CameraFront />}
+                startIcon={<ScanFace />}
                 disabled={loading}
                 sx={{ mb: 2, py: 1.5 }}
               >
