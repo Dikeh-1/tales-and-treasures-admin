@@ -28,6 +28,7 @@ import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/typ
 import { Fingerprint, CheckCircle, ScanFace } from 'lucide-react';
 import '../styles/AuthPages.css';
 import LoadingOverlay from '../components/LoadingOverlay';
+import FaceCapture from '../components/FaceCapture';
 
 const steps = ['Details', 'Verify Email', 'Fingerprint', 'Face Capture', 'Success'];
 
@@ -52,6 +53,7 @@ export default function RegistrationPage(): JSX.Element {
   const [code, setCode] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [isCapturingFace, setIsCapturingFace] = useState<boolean>(false);
   const [resendDisabled, setResendDisabled] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(30);
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -186,7 +188,7 @@ export default function RegistrationPage(): JSX.Element {
       });
 
       const phase = verifyRes.data.phase;
-      toast.success(`${type === 'fingerprint' ? 'Fingerprint' : 'Face'} configured successfully!`);
+      toast.success('Fingerprint configured successfully!');
 
       if (phase === 'PENDING_FACE') {
         setActiveStep(3);
@@ -195,6 +197,21 @@ export default function RegistrationPage(): JSX.Element {
       }
     } catch (err) {
       setError(getErrorMessage(err, 'Biometric configuration failed.'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFaceCapture = async (descriptorJSON: string) => {
+    setLoading(true);
+    setError('');
+    try {
+      await apiClient.post('/auth/face-register', { email, descriptor: descriptorJSON });
+      toast.success('Face Capture configured successfully!');
+      setIsCapturingFace(false);
+      setActiveStep(4);
+    } catch (err) {
+      setError(getErrorMessage(err, 'Face configuration failed.'));
     } finally {
       setLoading(false);
     }
@@ -402,20 +419,27 @@ export default function RegistrationPage(): JSX.Element {
                 Step 3: Face Capture Configuration
               </Typography>
               <Typography color="text.secondary" sx={{ mb: 4 }}>
-                Finally, register your face capture. This acts as your third authentication factor.
+                Finally, register your face capture. This acts as your independent third authentication factor.
               </Typography>
 
-              <Button
-                onClick={() => void handleBiometricRegister('face')}
-                variant="contained"
-                size="large"
-                fullWidth
-                startIcon={<ScanFace />}
-                disabled={loading}
-                sx={{ mb: 2, py: 1.5 }}
-              >
-                Scan Face
-              </Button>
+              {isCapturingFace ? (
+                <FaceCapture 
+                  onCapture={handleFaceCapture} 
+                  onCancel={() => setIsCapturingFace(false)} 
+                />
+              ) : (
+                <Button
+                  onClick={() => setIsCapturingFace(true)}
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  startIcon={<ScanFace />}
+                  disabled={loading}
+                  sx={{ mb: 2, py: 1.5 }}
+                >
+                  Scan Face
+                </Button>
+              )}
 
               {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
             </Box>

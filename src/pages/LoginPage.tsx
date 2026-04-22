@@ -20,8 +20,9 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import apiClient from '../api/apiClient';
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser';
-import { Fingerprint, ShieldCheck, UserPlus, KeyRound } from 'lucide-react';
+import { Fingerprint, ShieldCheck, UserPlus, KeyRound, ScanFace } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
+import FaceCapture from '../components/FaceCapture';
 import { toast } from 'react-hot-toast';
 import '../styles/AuthPages.css';
 
@@ -59,6 +60,7 @@ export default function LoginPage() {
   const [authMode, setAuthMode] = useState<AuthMode>('login');
   const [authMethod, setAuthMethod] = useState<AuthMethod>('password');
   const [needsBiometricSetup, setNeedsBiometricSetup] = useState(false);
+  const [isCapturingFace, setIsCapturingFace] = useState(false);
 
   const [resetOpen, setResetOpen] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
@@ -146,12 +148,57 @@ export default function LoginPage() {
       if (typedError?.response?.data?.description === 'NO_CREDENTIALS') {
         setNeedsBiometricSetup(true);
         setAuthMethod('password');
-        const factorName = type === 'face' ? 'Face Capture' : 'Fingerprint';
         setError(
-          `No ${factorName} is registered for this account. Please sign in with your password to complete setup.`,
+          `No Fingerprint is registered for this account. Please sign in with your password to complete setup.`,
         );
       } else {
         setError(getErrorMessage(err, 'Login failed.'));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFaceLogin = async (descriptorJSON: string) => {
+    setLoading(true);
+    setError('');
+    setIsCapturingFace(false);
+    try {
+      const normalizedEmail = normalizeEmail(email);
+      const verifyRes = await apiClient.post('/auth/face-login', {
+        email: normalizedEmail,
+        descriptor: descriptorJSON,
+      });
+
+      if (verifyRes.data.requiresConfiguration) {
+        toast.error(verifyRes.data.message || 'Please complete account configuration.');
+        navigate('/register', { 
+           state: { 
+             email: verifyRes.data.email, 
+             phase: verifyRes.data.phase 
+           } 
+        });
+        return;
+      }
+
+      auth.login(
+        verifyRes.data.user,
+        verifyRes.data.accessToken,
+        verifyRes.data.refreshToken,
+      );
+      navigate('/', { replace: true });
+    } catch (err) {
+      const typedError = err as {
+        response?: { data?: { description?: string; message?: string } };
+      };
+      if (typedError?.response?.data?.description === 'NO_CREDENTIALS') {
+        setNeedsBiometricSetup(true);
+        setAuthMethod('password');
+        setError(
+          `No Face Capture is registered for this account. Please sign in with your password to complete setup.`,
+        );
+      } else {
+        setError(getErrorMessage(err, 'Face login failed. Identity not verified.'));
       }
     } finally {
       setLoading(false);
@@ -468,12 +515,20 @@ export default function LoginPage() {
                 </Button>
 
                 <Button
-                  onClick={() => void handleBiometricLogin('face')}
+                  onClick={() => {
+                    const normalizedEmail = normalizeEmail(email);
+                    if (!normalizedEmail) {
+                      setError('Please enter your email first to use Face Capture.');
+                      return;
+                    }
+                    setError('');
+                    setIsCapturingFace(true);
+                  }}
                   fullWidth
                   variant="outlined"
                   size="large"
                   disabled={loading}
-                  startIcon={<UserPlus />}
+                  startIcon={<ScanFace />}
                   sx={{ py: 1.5, borderColor: '#cbd5e1', color: '#0f172a' }}
                 >
                   Sign in with Face Capture
@@ -655,6 +710,34 @@ export default function LoginPage() {
             {resettingPassword ? 'Resetting...' : 'Reset Password'}
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog 
+        open={isCapturingFace} 
+        onClose={() => setIsCapturingFace(false)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          style: {
+            backgroundColor: 'rgba(10, 10, 20, 0.95)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(0, 212, 255, 0.2)',
+            boxShadow: '0 0 40px rgba(0, 212, 255, 0.1)',
+            padding: '20px'
+          }
+        }}
+      >
+        <DialogTitle align="center" sx={{ color: 'white', mb: 2 }}>
+          Face Login Verification
+        </DialogTitle>
+        <DialogContent>
+          {isCapturingFace && (
+            <FaceCapture 
+              onCapture={handleFaceLogin} 
+              onCancel={() => setIsCapturingFace(false)} 
+            />
+          )}
+        </DialogContent>
       </Dialog>
     </Box>
   );

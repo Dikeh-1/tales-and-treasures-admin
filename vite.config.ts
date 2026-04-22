@@ -10,6 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: false,
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 10485760, // 10MB to accommodate AI models
+      },
       devOptions: {
         enabled: false,
       },
