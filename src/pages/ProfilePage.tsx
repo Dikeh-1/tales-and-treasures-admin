@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Avatar,
   Box,
@@ -6,11 +6,14 @@ import {
   Card,
   CardContent,
   Chip,
+  CircularProgress,
   Grid,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-hot-toast';
 import apiClient from '../api/apiClient';
 import LoadingOverlay from '../components/LoadingOverlay';
@@ -30,13 +33,16 @@ export default function ProfilePage(): JSX.Element {
   const [loadingSecurity, setLoadingSecurity] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const [name, setName] = useState(user?.name || '');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [hasPassword, setHasPassword] = useState<boolean | null>(null);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setName(user?.name || '');
@@ -67,6 +73,63 @@ export default function ProfilePage(): JSX.Element {
       .slice(0, 2)
       .join('');
   }, [user?.name]);
+
+  const handleAvatarFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file (JPG, PNG, GIF, etc.).');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be smaller than 5MB.');
+      return;
+    }
+
+    // Show local preview immediately
+    const localPreview = URL.createObjectURL(file);
+    setAvatarPreview(localPreview);
+
+    // Upload to Cloudinary via server
+    setUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await apiClient.post('/settings/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      const uploadedUrl = response.data?.url;
+      if (!uploadedUrl) {
+        throw new Error('No URL returned from upload.');
+      }
+
+      setAvatarUrl(uploadedUrl);
+      setAvatarPreview(null); // Clear local preview, use the real URL now
+      toast.success('Image uploaded successfully! Click "Save Profile" to apply.');
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Failed to upload image. Please try again.'));
+      setAvatarPreview(null);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarUrl('');
+    setAvatarPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const saveProfile = async () => {
     const trimmedName = name.trim();
@@ -125,6 +188,9 @@ export default function ProfilePage(): JSX.Element {
     }
   };
 
+  // Determine which image to show: local preview (during upload) > avatarUrl > initials
+  const displayAvatarSrc = avatarPreview || avatarUrl || undefined;
+
   return (
     <Box sx={{ position: 'relative' }}>
       {(loadingSecurity || savingProfile || savingPassword) && (
@@ -155,12 +221,32 @@ export default function ProfilePage(): JSX.Element {
               </Typography>
 
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
-                <Avatar
-                  src={avatarUrl || undefined}
-                  sx={{ width: 84, height: 84, bgcolor: 'primary.main', fontSize: 30 }}
-                >
-                  {initials}
-                </Avatar>
+                <Box sx={{ position: 'relative' }}>
+                  <Avatar
+                    src={displayAvatarSrc}
+                    sx={{ width: 84, height: 84, bgcolor: 'primary.main', fontSize: 30 }}
+                  >
+                    {initials}
+                  </Avatar>
+                  {uploadingAvatar && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: 84,
+                        height: 84,
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bgcolor: 'rgba(0,0,0,0.5)',
+                      }}
+                    >
+                      <CircularProgress size={28} sx={{ color: '#fff' }} />
+                    </Box>
+                  )}
+                </Box>
                 <Stack spacing={1} sx={{ width: '100%' }}>
                   <TextField
                     label="Full name"
@@ -168,12 +254,36 @@ export default function ProfilePage(): JSX.Element {
                     onChange={(event) => setName(event.target.value)}
                     fullWidth
                   />
-                  <TextField
-                    label="Avatar URL"
-                    value={avatarUrl}
-                    onChange={(event) => setAvatarUrl(event.target.value)}
-                    fullWidth
-                  />
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(e) => void handleAvatarFileChange(e)}
+                    />
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<CloudUploadIcon />}
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingAvatar}
+                    >
+                      {uploadingAvatar ? 'Uploading…' : avatarUrl ? 'Change Photo' : 'Upload Photo'}
+                    </Button>
+                    {avatarUrl && (
+                      <Button
+                        variant="text"
+                        size="small"
+                        color="error"
+                        startIcon={<DeleteIcon />}
+                        onClick={handleRemoveAvatar}
+                        disabled={uploadingAvatar}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </Stack>
                 </Stack>
               </Stack>
 
@@ -181,7 +291,7 @@ export default function ProfilePage(): JSX.Element {
                 <Button
                   variant="contained"
                   onClick={() => void saveProfile()}
-                  disabled={savingProfile}
+                  disabled={savingProfile || uploadingAvatar}
                 >
                   Save Profile
                 </Button>

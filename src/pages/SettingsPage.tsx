@@ -18,6 +18,7 @@ interface SettingsData {
 interface LiveStatsData {
   totalDonations?: number;
   financialDonationsReceived?: number;
+  bookDonationsReceived?: number;
 }
 
 export default function SettingsPage(): JSX.Element {
@@ -170,6 +171,16 @@ export default function SettingsPage(): JSX.Element {
                   disabled
                   helperText="Live, auto-calculated from Donations history."
                   onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Book Donations Received (Live)"
+                  name="bookDonationsReceived"
+                  value={Number(liveStats.bookDonationsReceived || 0)}
+                  disabled
+                  helperText="Live, auto-calculated from approved book donations."
                 />
               </Grid>
             </Grid>
