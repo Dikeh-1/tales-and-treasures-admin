@@ -1,0 +1,278 @@
+.auth-container {
+  --auth-bg-1: #f4f8fb;
+  --auth-bg-2: #eaf3fa;
+  --auth-bg-3: #fefbf6;
+  --auth-ink: #10263d;
+  --auth-muted: #5d7288;
+  --auth-primary: #0f8aaf;
+  --auth-primary-deep: #0b6a87;
+  --auth-accent: #ee9d3c;
+  --auth-border: rgba(16, 50, 79, 0.14);
+  --auth-glass: rgba(255, 255, 255, 0.86);
+
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  position: relative;
+  isolation: isolate;
+  font-family: "Sora", "Manrope", "Nunito Sans", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(15, 138, 175, 0.08), transparent 36%),
+    radial-gradient(circle at 90% 6%, rgba(238, 157, 60, 0.1), transparent 34%),
+    linear-gradient(165deg, var(--auth-bg-1), var(--auth-bg-2) 54%, var(--auth-bg-3));
+}
+
+.auth-background {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 16% 78%, rgba(15, 138, 175, 0.12), transparent 32%),
+    radial-gradient(circle at 84% 28%, rgba(238, 157, 60, 0.14), transparent 28%);
+  pointer-events: none;
+}
+
+.auth-container::before,
+.auth-container::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 999px;
+  filter: blur(1px);
+}
+
+.auth-container::before {
+  width: 280px;
+  height: 280px;
+  top: 10%;
+  right: 6%;
+  background: radial-gradient(circle at center, rgba(15, 138, 175, 0.15), transparent 72%);
+}
+
+.auth-container::after {
+  width: 240px;
+  height: 240px;
+  bottom: 8%;
+  left: 5%;
+  background: radial-gradient(circle at center, rgba(238, 157, 60, 0.16), transparent 72%);
+}
+
+.auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.1rem, 2.6vw, 2.7rem);
+}
+
+.auth-panel.branding-panel {
+  display: none;
+}
+
+.auth-panel.form-panel {
+  backdrop-filter: blur(4px);
+}
+
+.branding-logo {
+  margin-bottom: 2rem;
+  color: #f5fbff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.branding-quote {
+  margin: 0;
+  max-width: 13ch;
+  color: #f8fcff;
+  font-size: clamp(2rem, 3.4vw, 3.3rem);
+  font-weight: 750;
+  line-height: 1.08;
+}
+
+.branding-author {
+  margin-top: 1.15rem;
+  color: rgba(226, 240, 250, 0.92);
+  font-size: 0.96rem;
+  max-width: 32ch;
+}
+
+.auth-form-container {
+  width: min(100%, 540px);
+  border-radius: 28px;
+  padding: clamp(1.35rem, 2.3vw, 2.4rem);
+  background:
+    linear-gradient(
+      160deg,
+      var(--auth-glass),
+      rgba(247, 252, 255, 0.83)
+    );
+  border: 1px solid var(--auth-border);
+  box-shadow:
+    0 24px 65px rgba(9, 28, 45, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.85) inset;
+}
+
+.auth-form-container .MuiTypography-root {
+  color: var(--auth-ink);
+}
+
+.auth-form-container .MuiTypography-colorTextSecondary,
+.auth-form-container .MuiTypography-colorTextPrimary,
+.auth-form-container .MuiTypography-body2 {
+  color: var(--auth-muted);
+}
+
+.auth-form-container .MuiLink-root {
+  color: var(--auth-primary-deep);
+  font-weight: 650;
+}
+
+.auth-form-container .MuiAlert-root {
+  border-radius: 12px;
+}
+
+.auth-form-container .MuiButton-root {
+  border-radius: 12px;
+  text-transform: none;
+  font-weight: 700;
+}
+
+.auth-form-container .MuiButton-contained {
+  color: #fff;
+  background: linear-gradient(135deg, var(--auth-primary), var(--auth-primary-deep));
+  box-shadow: 0 12px 26px rgba(11, 106, 135, 0.22);
+}
+
+.auth-form-container .MuiButton-contained:hover {
+  background: linear-gradient(135deg, var(--auth-primary-deep), #085369);
+}
+
+.auth-form-container .MuiButton-outlined {
+  border-color: rgba(15, 106, 135, 0.35);
+  color: var(--auth-primary-deep);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.auth-form-container .MuiButton-outlined:hover {
+  border-color: var(--auth-primary);
+  background: rgba(233, 246, 251, 0.92);
+}
+
+.auth-form-container .MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.auth-form-container .MuiInputLabel-root {
+  color: #5f7388;
+}
+
+.auth-form-container .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(90, 116, 140, 0.34);
+}
+
+.auth-form-container
+  .MuiOutlinedInput-root.Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--auth-primary-deep);
+}
+
+.auth-form-container .MuiOutlinedInput-input {
+  color: #16314c;
+}
+
+.auth-form-container .MuiStepIcon-root.Mui-active {
+  color: var(--auth-primary);
+}
+
+.auth-form-container .MuiStepIcon-root.Mui-completed {
+  color: var(--auth-accent);
+}
+
+.auth-method-toggle .MuiButton-root {
+  min-height: 42px;
+}
+
+.auth-reset-dialog .MuiPaper-root {
+  border-radius: 22px;
+  border: 1px solid var(--auth-border);
+  background:
+    linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(245, 252, 255, 0.94)
+    );
+  box-shadow: 0 24px 65px rgba(9, 28, 45, 0.2);
+}
+
+.auth-reset-title {
+  color: var(--auth-ink);
+  font-weight: 760;
+  letter-spacing: -0.01em;
+}
+
+.auth-reset-content {
+  color: var(--auth-muted);
+}
+
+.auth-reset-content .MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.auth-reset-send-btn.MuiButton-root {
+  margin-top: 0.7rem;
+  margin-bottom: 0.4rem;
+}
+
+.auth-reset-actions {
+  padding: 0 1.5rem 1.3rem;
+}
+
+@media (min-width: 1024px) {
+  .auth-container {
+    grid-template-columns: minmax(340px, 43%) 1fr;
+    background:
+      radial-gradient(circle at 8% 12%, rgba(15, 138, 175, 0.12), transparent 36%),
+      radial-gradient(circle at 90% 6%, rgba(238, 157, 60, 0.12), transparent 34%),
+      linear-gradient(165deg, #0d2840 0%, #143753 38%, #1e4b63 100%);
+  }
+
+  .auth-panel.branding-panel {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    color: #fff;
+    padding: clamp(2rem, 5vw, 4rem);
+  }
+
+  .auth-panel.form-panel {
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
+@media (max-width: 1023px) {
+  .auth-container::before,
+  .auth-container::after {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-panel.form-panel {
+    align-items: flex-start;
+  }
+
+  .auth-form-container {
+    margin-top: 0.65rem;
+    border-radius: 20px;
+    padding: 1.15rem;
+  }
+
+  .auth-method-toggle {
+    grid-template-columns: 1fr;
+  }
+}
