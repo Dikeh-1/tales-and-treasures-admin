@@ -446,7 +446,7 @@ export default function RegistrationPage(): JSX.Element {
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
             To proceed with registration, this device <strong>MUST</strong> be equipped with a hardware <strong>Fingerprint Sensor</strong> and a <strong>Camera</strong>.
-          </Typography>
+          </DialogContentText>
           <DialogContentText>
             If your current device does not have these sensors, please click <strong>Cancel</strong>, and resume this registration on a compatible device (e.g., your smartphone or a modern laptop) by simply logging in.
           </DialogContentText>
