@@ -9,7 +9,6 @@ interface SettingsData {
   donationTarget?: number | string;
   childrenEngaged?: string;
   booksDonated?: string;
-  donationsReceived?: string;
   outreachPrograms?: string;
   donatePageImage?: File | null;
   donatePageImageUrl?: string;
@@ -142,17 +141,7 @@ export default function SettingsPage(): JSX.Element {
                   helperText="Manual impact total (includes offline book support)."
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Donations Received"
-                  name="donationsReceived"
-                  type="number"
-                  value={settings.donationsReceived ?? ''}
-                  onChange={handleInputChange}
-                  helperText="Manual impact total shown on Home/About/Trust Strip."
-                />
-              </Grid>
+
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth

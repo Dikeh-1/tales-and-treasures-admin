@@ -13,12 +13,17 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import apiClient from '../api/apiClient';
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser';
 import { Fingerprint, ShieldCheck, UserPlus, KeyRound } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { toast } from 'react-hot-toast';
+import '../styles/AuthPages.css';
 
 type AuthMode = 'login' | 'verifyDevice';
 type AuthMethod = 'biometric' | 'password';
@@ -47,6 +52,7 @@ function getErrorMessage(error: unknown, fallback: string) {
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -59,6 +65,7 @@ export default function LoginPage() {
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showResetPassword, setShowResetPassword] = useState(false);
   const [sendingResetCode, setSendingResetCode] = useState(false);
   const [resettingPassword, setResettingPassword] = useState(false);
 
@@ -413,11 +420,20 @@ export default function LoginPage() {
                 id="password"
                 label="Password"
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 disabled={loading}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
 
@@ -533,15 +549,24 @@ export default function LoginPage() {
             margin="normal"
             fullWidth
             label="New Password"
-            type="password"
+            type={showResetPassword ? 'text' : 'password'}
             value={newPassword}
             onChange={(event) => setNewPassword(event.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowResetPassword(!showResetPassword)} edge="end">
+                    {showResetPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             margin="normal"
             fullWidth
             label="Confirm New Password"
-            type="password"
+            type={showResetPassword ? 'text' : 'password'}
             value={confirmPassword}
             onChange={(event) => setConfirmPassword(event.target.value)}
           />

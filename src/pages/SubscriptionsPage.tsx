@@ -23,7 +23,7 @@ import {
   DataGrid,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { XCircle } from 'lucide-react';
+import CancelIcon from '@mui/icons-material/Cancel';
 import apiClient from '../api/apiClient';
 import { toast } from 'react-hot-toast';
 
@@ -105,13 +105,16 @@ export default function SubscriptionsPage() {
       field: 'status',
       headerName: 'Status',
       width: 120,
-      renderCell: (params) => (
-        <Chip
-          label={params.value}
-          color={params.value === 'active' ? 'success' : 'default'}
-          size="small"
-        />
-      ),
+      renderCell: (params) => {
+        const isActive = String(params.value).toLowerCase() === 'active';
+        return (
+          <Chip
+            label={params.value}
+            color={isActive ? 'success' : 'default'}
+            size="small"
+          />
+        );
+      },
     },
     {
       field: 'actions',
@@ -119,11 +122,12 @@ export default function SubscriptionsPage() {
       headerName: 'Actions',
       width: 100,
       getActions: (params) => {
-        if (params.row.status === 'active') {
+        const isActive = String(params.row.status).toLowerCase() === 'active';
+        if (isActive) {
           return [
             <GridActionsCellItem
               key="disable"
-              icon={<XCircle size={20} style={{ color: 'var(--mui-palette-error-main, red)' }} />}
+              icon={<CancelIcon color="error" />}
               label="Disable"
               onClick={() => handleDisableClick(params.id)}
               disabled={disabling}
@@ -195,7 +199,7 @@ export default function SubscriptionsPage() {
                 </Typography>
                 <Chip
                   label={row.status}
-                  color={row.status === 'active' ? 'success' : 'default'}
+                  color={String(row.status).toLowerCase() === 'active' ? 'success' : 'default'}
                   size="small"
                 />
               </Box>
@@ -203,12 +207,12 @@ export default function SubscriptionsPage() {
             
             <Divider />
             
-            {row.status === 'active' && (
+            {String(row.status).toLowerCase() === 'active' && (
               <CardActions>
                 <Button
                   size="small"
                   color="error"
-                  startIcon={<XCircle size={16} />}
+                  startIcon={<CancelIcon fontSize="small" />}
                   onClick={() => handleDisableClick(row.id)}
                   disabled={disabling}
                   fullWidth

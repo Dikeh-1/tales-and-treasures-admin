@@ -135,9 +135,8 @@ export default function UsersPage() {
     }
   };
 
-  const handleEditClick = (id: number) => () => {
-    const user = rows.find((r) => r.id === id);
-    setUserToEdit(user || null);
+  const handleEditClick = (row: any) => () => {
+    setUserToEdit(row);
     setFormModalOpen(true);
   };
 
@@ -220,7 +219,7 @@ export default function UsersPage() {
             key="edit"
             icon={<EditIcon />} 
             label="Edit" 
-            onClick={handleEditClick(params.id as number)} 
+            onClick={handleEditClick(params.row)} 
           />,
           <GridActionsCellItem 
             key="delete"
@@ -294,7 +293,7 @@ export default function UsersPage() {
               onClose={closeActionMenu(row.id)}
             >
               <MenuList dense>
-                <MenuItem onClick={() => { closeActionMenu(row.id)(); handleEditClick(row.id)(); }}>
+                <MenuItem onClick={() => { closeActionMenu(row.id)(); handleEditClick(row)(); }}>
                   <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
                   <ListItemText>Edit Account</ListItemText>
                 </MenuItem>

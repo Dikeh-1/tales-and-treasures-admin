@@ -11,7 +11,11 @@ import {
   Step,
   StepLabel,
   Link,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { toast } from 'react-hot-toast';
 import apiClient from '../api/apiClient';
 import { startRegistration } from '@simplewebauthn/browser';
@@ -44,14 +48,16 @@ export default function RegistrationPage(): JSX.Element {
   const [countdown, setCountdown] = useState<number>(30);
   const [registrationOptions, setRegistrationOptions] = useState<unknown>(null);
   const [biometricRegistered, setBiometricRegistered] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   const countdownRef = useRef<number | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     return () => {
-      if (countdownRef.current) {
-        window.clearInterval(countdownRef.current);
-      }
+      if (countdownRef.current) window.clearInterval(countdownRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
@@ -124,7 +130,7 @@ export default function RegistrationPage(): JSX.Element {
         });
       }, 1000);
 
-      setTimeout(() => setResendDisabled(false), 30000);
+      timeoutRef.current = setTimeout(() => setResendDisabled(false), 30000);
     } catch (err) {
       setError(getErrorMessage(err, 'Failed to resend code.'));
       setResendDisabled(false);
@@ -243,22 +249,40 @@ export default function RegistrationPage(): JSX.Element {
               />
               <TextField
                 label="Password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 fullWidth
                 margin="normal"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 required
                 helperText="At least 8 characters with letters and numbers."
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <TextField
                 label="Confirm Password"
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 fullWidth
                 margin="normal"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 required
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
