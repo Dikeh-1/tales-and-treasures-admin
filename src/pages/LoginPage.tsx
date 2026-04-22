@@ -93,7 +93,7 @@ export default function LoginPage() {
     await handleBiometricLogin();
   };
 
-  const handleBiometricLogin = async () => {
+  const handleBiometricLogin = async (type: 'fingerprint' | 'face') => {
     const normalizedEmail = normalizeEmail(email);
     if (!normalizedEmail) {
       setError('Please enter your email to begin.');
@@ -146,8 +146,9 @@ export default function LoginPage() {
       if (typedError?.response?.data?.description === 'NO_CREDENTIALS') {
         setNeedsBiometricSetup(true);
         setAuthMethod('password');
+        const factorName = type === 'face' ? 'Face Capture' : 'Fingerprint';
         setError(
-          'This account does not have biometrics configured. Please sign in with your password to complete setup.',
+          `No ${factorName} is registered for this account. Please sign in with your password to complete setup.`,
         );
       } else {
         setError(getErrorMessage(err, 'Login failed.'));
@@ -452,7 +453,7 @@ export default function LoginPage() {
                 </Box>
 
                 <Button
-                  onClick={() => void handleBiometricLogin()}
+                  onClick={() => void handleBiometricLogin('fingerprint')}
                   fullWidth
                   variant="outlined"
                   size="large"
@@ -464,7 +465,7 @@ export default function LoginPage() {
                 </Button>
 
                 <Button
-                  onClick={() => void handleBiometricLogin()}
+                  onClick={() => void handleBiometricLogin('face')}
                   fullWidth
                   variant="outlined"
                   size="large"

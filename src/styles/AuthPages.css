@@ -1,60 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
-@keyframes gradientAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes starDrift {
+  from { transform: translateY(0px) rotate(0deg); }
+  to { transform: translateY(-2000px) rotate(5deg); }
 }
 
-@keyframes orbFloat1 {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(20%, 15%) scale(1.1); }
-}
-
-@keyframes orbFloat2 {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(-20%, -15%) scale(1.2); }
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 20px rgba(138, 43, 226, 0.4), inset 0 0 20px rgba(138, 43, 226, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6), inset 0 0 30px rgba(0, 212, 255, 0.3); }
+  100% { box-shadow: 0 0 20px rgba(138, 43, 226, 0.4), inset 0 0 20px rgba(138, 43, 226, 0.2); }
 }
 
 .auth-container {
   min-height: 100vh;
   display: flex;
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(-45deg, #0b1120, #0f2b3c, #1e1b4b, #20113a);
-  background-size: 400% 400%;
-  animation: gradientAnimation 18s ease infinite;
+  background-color: #030014;
+  background-image: 
+    linear-gradient(rgba(3, 0, 20, 0.7), rgba(10, 0, 40, 0.8)),
+    url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2000&auto=format&fit=crop");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   position: relative;
   overflow: hidden;
   color: #ffffff;
 }
 
-/* Glowing Orbs */
+/* Animated Starfield Effect */
 .auth-container::before {
   content: '';
   position: absolute;
-  top: -20%;
-  left: -10%;
-  width: 60vw;
-  height: 60vw;
-  background: radial-gradient(circle, rgba(226,142,38,0.2) 0%, rgba(0,0,0,0) 60%);
-  border-radius: 50%;
-  filter: blur(80px);
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background-image: radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #ffffff, rgba(0,0,0,0)), radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)), radial-gradient(2px 2px at 130px 80px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: starDrift 100s linear infinite;
+  opacity: 0.5;
   z-index: 0;
-  animation: orbFloat1 25s infinite alternate ease-in-out;
-}
-
-.auth-container::after {
-  content: '';
-  position: absolute;
-  bottom: -20%;
-  right: -10%;
-  width: 50vw;
-  height: 50vw;
-  background: radial-gradient(circle, rgba(15,122,158,0.3) 0%, rgba(0,0,0,0) 60%);
-  border-radius: 50%;
-  filter: blur(80px);
-  z-index: 0;
-  animation: orbFloat2 20s infinite alternate ease-in-out;
 }
 
 .auth-panel {
@@ -95,32 +81,33 @@
   display: block;
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #e28e26, #f5a623);
+  background: linear-gradient(135deg, #00d4ff, #8a2be2);
   border-radius: 10px;
-  box-shadow: 0 0 20px rgba(226, 142, 38, 0.6);
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.8);
 }
 
 .branding-quote {
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(3rem, 5vw, 4.5rem);
+  font-size: clamp(3.5rem, 5vw, 5rem);
   font-weight: 800;
-  line-height: 1.05;
+  line-height: 1.1;
   margin-bottom: 1.5rem;
-  background: linear-gradient(to right, #ffffff, #a5b4fc);
+  background: linear-gradient(to right, #ffffff, #00d4ff, #8a2be2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  text-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
 }
 
 .branding-author {
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 400;
   max-width: 40ch;
   line-height: 1.6;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 
-/* Glassmorphism Form Container */
+/* Space Glassmorphism Form Container */
 .auth-panel.form-panel {
   background: transparent;
 }
@@ -128,15 +115,15 @@
 .auth-form-container {
   width: 100%;
   max-width: 480px;
-  background: rgba(20, 25, 40, 0.5);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 24px;
+  background: rgba(10, 5, 30, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-top: 1px solid rgba(0, 212, 255, 0.4);
+  border-left: 1px solid rgba(0, 212, 255, 0.4);
+  border-radius: 30px;
   padding: 3.5rem 3rem;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: pulseGlow 6s infinite alternate;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -146,12 +133,13 @@
   font-weight: 800 !important;
   color: #ffffff !important;
   margin-bottom: 0.5rem !important;
-  font-size: 2.4rem !important;
+  font-size: 2.6rem !important;
   letter-spacing: -0.02em !important;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
 }
 
 .auth-subtitle {
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
   font-size: 1.05rem !important;
   line-height: 1.6 !important;
 }
@@ -162,15 +150,15 @@
 }
 
 .auth-link-text a {
-  color: #e28e26 !important;
+  color: #00d4ff !important;
   font-weight: 600 !important;
   text-decoration: none !important;
-  transition: color 0.2s ease !important;
+  transition: all 0.2s ease !important;
 }
 
 .auth-link-text a:hover {
-  color: #f5a623 !important;
-  text-shadow: 0 0 8px rgba(245, 166, 35, 0.4);
+  color: #8a2be2 !important;
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.6);
 }
 
 /* Material UI TextFields & Form Controls */
@@ -182,8 +170,8 @@
 
 .auth-form-container .MuiOutlinedInput-root,
 .auth-reset-content .MuiOutlinedInput-root {
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
 }
 
@@ -196,13 +184,13 @@
 
 .auth-form-container .MuiOutlinedInput-root:hover,
 .auth-reset-content .MuiOutlinedInput-root:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .auth-form-container .MuiOutlinedInput-root.Mui-focused,
 .auth-reset-content .MuiOutlinedInput-root.Mui-focused {
-  background: rgba(0, 0, 0, 0.4);
-  box-shadow: 0 0 15px rgba(226, 142, 38, 0.15);
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
 }
 
 .auth-form-container .MuiOutlinedInput-notchedOutline,
@@ -212,12 +200,12 @@
 
 .auth-form-container .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline,
 .auth-reset-content .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 212, 255, 0.5);
 }
 
 .auth-form-container .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline,
 .auth-reset-content .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: #e28e26 !important;
+  border-color: #00d4ff !important;
   border-width: 2px;
 }
 
@@ -229,7 +217,7 @@
 
 .auth-form-container .MuiInputLabel-root.Mui-focused,
 .auth-reset-content .MuiInputLabel-root.Mui-focused {
-  color: #e28e26;
+  color: #00d4ff;
   font-weight: 600;
 }
 
@@ -241,48 +229,51 @@
 .auth-form-container .MuiIconButton-root:hover,
 .auth-reset-content .MuiIconButton-root:hover {
   color: #ffffff !important;
+  text-shadow: 0 0 10px #00d4ff;
 }
 
 /* Primary Action Buttons */
 .auth-form-container .MuiButton-contained,
 .auth-reset-actions .MuiButton-contained {
-  border-radius: 12px;
-  background: linear-gradient(135deg, #e28e26, #f5a623);
+  border-radius: 16px;
+  background: linear-gradient(135deg, #00d4ff, #8a2be2);
   color: #ffffff;
   font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 1.05rem;
-  padding: 14px 24px;
-  text-transform: none;
-  box-shadow: 0 4px 15px rgba(226, 142, 38, 0.4);
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 16px 24px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255,255,255,0.2);
+  border: none;
 }
 
 .auth-form-container .MuiButton-contained:hover,
 .auth-reset-actions .MuiButton-contained:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(226, 142, 38, 0.6);
-  background: linear-gradient(135deg, #f5a623, #ffb74d);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(138, 43, 226, 0.6);
+  background: linear-gradient(135deg, #00e5ff, #9d4edd);
 }
 
 .auth-form-container .MuiButton-outlined,
 .auth-reset-actions .MuiButton-outlined {
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 212, 255, 0.3) !important;
   color: #ffffff !important;
   font-weight: 600;
   text-transform: none;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(0, 212, 255, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
 .auth-form-container .MuiButton-outlined:hover,
 .auth-reset-actions .MuiButton-outlined:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  transform: translateY(-1px);
+  background: rgba(0, 212, 255, 0.15);
+  border-color: #00d4ff !important;
+  box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+  transform: translateY(-2px);
 }
 
 /* Typography inside specific box areas */
@@ -296,52 +287,55 @@
 }
 .auth-stepper .MuiStepLabel-label.Mui-active,
 .auth-stepper .MuiStepLabel-label.Mui-completed {
-  color: #ffffff !important;
+  color: #00d4ff !important;
   font-weight: 600;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
 }
 .auth-stepper .MuiStepIcon-text {
-  fill: #0f172a;
+  fill: #ffffff;
+  font-weight: 800;
 }
 .auth-stepper .MuiStepIcon-root {
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.1);
 }
 .auth-stepper .MuiStepIcon-root.Mui-active {
-  color: #e28e26;
+  color: #00d4ff;
 }
 .auth-stepper .MuiStepIcon-root.Mui-completed {
-  color: #34d399;
+  color: #8a2be2;
 }
 
 /* Reset Password Dialog Restyling */
 .auth-reset-dialog .MuiPaper-root {
-  border-radius: 24px;
-  padding: 1.5rem;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 2rem;
+  background: rgba(10, 5, 30, 0.75);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 50px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
 .auth-reset-title {
   font-family: 'Outfit', sans-serif !important;
   font-weight: 800 !important;
-  font-size: 2rem !important;
+  font-size: 2.2rem !important;
   color: #ffffff;
   padding-bottom: 0.5rem !important;
+  text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
 }
 
 .auth-reset-content .MuiTypography-body2 {
-  color: rgba(255, 255, 255, 0.7) !important;
-  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 1.1rem;
   line-height: 1.6;
 }
 
 .auth-reset-send-btn {
-  border-radius: 12px !important;
+  border-radius: 16px !important;
   text-transform: none !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   margin-top: 1rem !important;
   margin-bottom: 1.5rem !important;
 }
@@ -351,15 +345,15 @@
 }
 
 .auth-reset-actions .MuiButton-root {
-  border-radius: 12px;
-  font-weight: 600;
+  border-radius: 16px;
+  font-weight: 700;
   text-transform: none;
-  padding: 10px 24px;
+  padding: 12px 28px;
 }
 
 /* "OR QUICK LOGIN" divider text */
 .auth-form-container .MuiTypography-root {
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 .auth-form-container .auth-title {
   color: #ffffff !important;
@@ -367,13 +361,14 @@
 
 /* Alerts */
 .MuiAlert-root {
-  border-radius: 12px !important;
-  background: rgba(254, 226, 226, 0.1) !important;
-  border: 1px solid rgba(239, 68, 68, 0.3) !important;
-  color: #fca5a5 !important;
+  border-radius: 16px !important;
+  background: rgba(255, 0, 100, 0.15) !important;
+  border: 1px solid rgba(255, 0, 100, 0.4) !important;
+  color: #ffb3c6 !important;
+  backdrop-filter: blur(10px);
 }
 .MuiAlert-icon {
-  color: #ef4444 !important;
+  color: #ff0064 !important;
 }
 
 /* Responsive adjustments */
@@ -386,11 +381,11 @@
 @media (max-width: 768px) {
   .auth-form-container {
     padding: 2.5rem 1.5rem;
-    border-radius: 20px;
-    background: rgba(15, 23, 42, 0.6);
+    border-radius: 24px;
+    background: rgba(10, 5, 30, 0.7);
   }
   
   .auth-title {
-    font-size: 2rem !important;
+    font-size: 2.2rem !important;
   }
 }
