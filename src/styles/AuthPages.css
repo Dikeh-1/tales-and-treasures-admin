@@ -1,242 +1,345 @@
-/* auth-container is the main wrapper for the login/register pages */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes orbFloat1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(20%, 15%) scale(1.1); }
+}
+
+@keyframes orbFloat2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-20%, -15%) scale(1.2); }
+}
 
 .auth-container {
-  --brand-primary: #0a4f66;
-  --brand-secondary: #0f7a9e;
-  --brand-accent: #e28e26;
-  --brand-light: #f4f7f9;
-  --text-main: #000000;
-  --text-muted: #1e293b;
-  
   min-height: 100vh;
   display: flex;
   font-family: 'Inter', sans-serif;
-  background-color: var(--brand-light);
+  background: linear-gradient(-45deg, #0b1120, #0f2b3c, #1e1b4b, #20113a);
+  background-size: 400% 400%;
+  animation: gradientAnimation 18s ease infinite;
   position: relative;
   overflow: hidden;
+  color: #ffffff;
 }
 
-/* Base Panel Styles */
+/* Glowing Orbs */
+.auth-container::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(226,142,38,0.2) 0%, rgba(0,0,0,0) 60%);
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+  animation: orbFloat1 25s infinite alternate ease-in-out;
+}
+
+.auth-container::after {
+  content: '';
+  position: absolute;
+  bottom: -20%;
+  right: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(15,122,158,0.3) 0%, rgba(0,0,0,0) 60%);
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+  animation: orbFloat2 20s infinite alternate ease-in-out;
+}
+
 .auth-panel {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   padding: 2rem;
 }
 
 /* Left Panel: Deep rich branding */
 .auth-panel.branding-panel {
-  display: none; /* Hidden on mobile */
-  color: white;
-  position: relative;
-  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 6rem;
+  flex: 1.2; 
 }
 
 .branding-logo {
   font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.9);
+  color: #ffffff;
   margin-bottom: 2rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .branding-logo::before {
   content: '';
   display: block;
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, var(--brand-accent), #f5a623);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(226, 142, 38, 0.4);
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #e28e26, #f5a623);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(226, 142, 38, 0.6);
 }
 
 .branding-quote {
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
-  font-weight: 700;
-  line-height: 1.1;
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
   margin-bottom: 1.5rem;
+  background: linear-gradient(to right, #ffffff, #a5b4fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .branding-author {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 300;
-  max-width: 35ch;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+  max-width: 40ch;
   line-height: 1.6;
 }
 
-/* Right Panel: The actual form */
+/* Glassmorphism Form Container */
 .auth-panel.form-panel {
   background: transparent;
 }
 
-/* Super crisp, solid modern form container */
 .auth-form-container {
   width: 100%;
   max-width: 480px;
-  background: #ffffff;
-  border-radius: 16px;
+  background: rgba(20, 25, 40, 0.5);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
   padding: 3.5rem 3rem;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Typography Overrides inside form */
+/* Typography Inside Form */
 .auth-title {
   font-family: 'Outfit', sans-serif !important;
-  font-weight: 700 !important;
-  color: var(--text-main) !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
   margin-bottom: 0.5rem !important;
-  font-size: 2.2rem !important;
+  font-size: 2.4rem !important;
   letter-spacing: -0.02em !important;
 }
 
 .auth-subtitle {
-  color: var(--text-muted) !important;
-  font-size: 1rem !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 1.05rem !important;
   line-height: 1.6 !important;
 }
 
 .auth-link-text {
-  color: var(--text-muted) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
   margin-top: 2rem !important;
 }
 
 .auth-link-text a {
-  color: var(--brand-secondary) !important;
+  color: #e28e26 !important;
   font-weight: 600 !important;
   text-decoration: none !important;
   transition: color 0.2s ease !important;
 }
 
 .auth-link-text a:hover {
-  color: var(--brand-primary) !important;
+  color: #f5a623 !important;
+  text-shadow: 0 0 8px rgba(245, 166, 35, 0.4);
 }
 
-/* Form Controls */
-.auth-form-container .MuiTextField-root {
+/* Material UI TextFields & Form Controls */
+.auth-form-container .MuiTextField-root,
+.auth-reset-content .MuiTextField-root {
   margin-top: 16px;
   margin-bottom: 16px;
 }
 
-.auth-form-container .MuiOutlinedInput-root {
-  border-radius: 8px;
-  background: #f1f5f9;
-  transition: all 0.2s ease;
+.auth-form-container .MuiOutlinedInput-root,
+.auth-reset-content .MuiOutlinedInput-root {
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
-.auth-form-container .MuiInputBase-input {
-  color: #000000 !important;
-  font-weight: 600 !important;
+.auth-form-container .MuiInputBase-input,
+.auth-reset-content .MuiInputBase-input {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  padding: 16.5px 14px;
 }
 
-.auth-form-container .MuiOutlinedInput-root:hover {
-  background: #f4f4f5;
+.auth-form-container .MuiOutlinedInput-root:hover,
+.auth-reset-content .MuiOutlinedInput-root:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
 
-.auth-form-container .MuiOutlinedInput-root.Mui-focused {
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(15, 122, 158, 0.05);
+.auth-form-container .MuiOutlinedInput-root.Mui-focused,
+.auth-reset-content .MuiOutlinedInput-root.Mui-focused {
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 15px rgba(226, 142, 38, 0.15);
 }
 
-.auth-form-container .MuiOutlinedInput-notchedOutline {
-  border-color: rgba(100, 116, 139, 0.2);
+.auth-form-container .MuiOutlinedInput-notchedOutline,
+.auth-reset-content .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
-.auth-form-container .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: var(--brand-secondary);
+.auth-form-container .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline,
+.auth-reset-content .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.auth-form-container .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline,
+.auth-reset-content .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #e28e26 !important;
   border-width: 2px;
 }
 
-.auth-form-container .MuiInputLabel-root {
-  color: #0f172a;
-  font-weight: 500;
+.auth-form-container .MuiInputLabel-root,
+.auth-reset-content .MuiInputLabel-root {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
 }
 
-.auth-form-container .MuiInputLabel-root.Mui-focused {
-  color: var(--brand-secondary);
-  font-weight: 500;
+.auth-form-container .MuiInputLabel-root.Mui-focused,
+.auth-reset-content .MuiInputLabel-root.Mui-focused {
+  color: #e28e26;
+  font-weight: 600;
+}
+
+.auth-form-container .MuiIconButton-root,
+.auth-reset-content .MuiIconButton-root {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.auth-form-container .MuiIconButton-root:hover,
+.auth-reset-content .MuiIconButton-root:hover {
+  color: #ffffff !important;
 }
 
 /* Primary Action Buttons */
-.auth-form-container .MuiButton-contained {
-  border-radius: 8px;
-  background: var(--text-main);
-  color: white;
+.auth-form-container .MuiButton-contained,
+.auth-reset-actions .MuiButton-contained {
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e28e26, #f5a623);
+  color: #ffffff;
   font-family: 'Inter', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1.05rem;
   padding: 14px 24px;
   text-transform: none;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(226, 142, 38, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
-.auth-form-container .MuiButton-contained:hover {
+.auth-form-container .MuiButton-contained:hover,
+.auth-reset-actions .MuiButton-contained:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  background: #000000;
+  box-shadow: 0 10px 25px rgba(226, 142, 38, 0.6);
+  background: linear-gradient(135deg, #f5a623, #ffb74d);
 }
 
-.auth-form-container .MuiButton-outlined {
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  color: var(--text-main);
+.auth-form-container .MuiButton-outlined,
+.auth-reset-actions .MuiButton-outlined {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
   font-weight: 600;
   text-transform: none;
-  background: #ffffff;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-.auth-form-container .MuiButton-outlined:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+.auth-form-container .MuiButton-outlined:hover,
+.auth-reset-actions .MuiButton-outlined:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+/* Typography inside specific box areas */
+.auth-form-container .MuiTypography-root.MuiTypography-body1 {
+  color: #ffffff;
 }
 
 /* Stepper (Register Page) */
+.auth-stepper .MuiStepLabel-label {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+.auth-stepper .MuiStepLabel-label.Mui-active,
+.auth-stepper .MuiStepLabel-label.Mui-completed {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+.auth-stepper .MuiStepIcon-text {
+  fill: #0f172a;
+}
+.auth-stepper .MuiStepIcon-root {
+  color: rgba(255, 255, 255, 0.2);
+}
 .auth-stepper .MuiStepIcon-root.Mui-active {
-  color: var(--text-main);
+  color: #e28e26;
 }
 .auth-stepper .MuiStepIcon-root.Mui-completed {
-  color: var(--brand-accent);
+  color: #34d399;
 }
 
 /* Reset Password Dialog Restyling */
 .auth-reset-dialog .MuiPaper-root {
-  border-radius: 16px;
+  border-radius: 24px;
   padding: 1.5rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  background: #ffffff;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .auth-reset-title {
   font-family: 'Outfit', sans-serif !important;
   font-weight: 800 !important;
-  font-size: 1.8rem !important;
-  color: #000000;
+  font-size: 2rem !important;
+  color: #ffffff;
   padding-bottom: 0.5rem !important;
 }
 
-.auth-reset-content .MuiTextField-root {
-  margin-top: 16px;
-}
-
-.auth-reset-content .MuiOutlinedInput-root {
-  border-radius: 8px;
+.auth-reset-content .MuiTypography-body2 {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
 .auth-reset-send-btn {
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   text-transform: none !important;
   font-weight: 600 !important;
   margin-top: 1rem !important;
@@ -247,34 +350,47 @@
   padding: 1rem 1.5rem 1.5rem !important;
 }
 
-.auth-reset-actions .MuiButton-contained {
-  border-radius: 8px;
-  background: var(--text-main);
-  text-transform: none;
+.auth-reset-actions .MuiButton-root {
+  border-radius: 12px;
   font-weight: 600;
+  text-transform: none;
   padding: 10px 24px;
+}
+
+/* "OR QUICK LOGIN" divider text */
+.auth-form-container .MuiTypography-root {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+.auth-form-container .auth-title {
+  color: #ffffff !important;
+}
+
+/* Alerts */
+.MuiAlert-root {
+  border-radius: 12px !important;
+  background: rgba(254, 226, 226, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  color: #fca5a5 !important;
+}
+.MuiAlert-icon {
+  color: #ef4444 !important;
 }
 
 /* Responsive adjustments */
 @media (min-width: 1024px) {
   .auth-panel.branding-panel {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    padding: 6rem;
-    flex: 1.2; 
   }
 }
 
 @media (max-width: 768px) {
   .auth-form-container {
     padding: 2.5rem 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    background: rgba(15, 23, 42, 0.6);
   }
   
   .auth-title {
-    font-size: 1.8rem !important;
+    font-size: 2rem !important;
   }
 }

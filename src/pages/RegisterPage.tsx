@@ -210,11 +210,7 @@ export default function RegistrationPage(): JSX.Element {
 
   return (
     <Box className="auth-container">
-      <Box className="auth-panel branding-panel" sx={{
-        backgroundImage: 'linear-gradient(rgba(10, 79, 102, 0.7), rgba(6, 43, 56, 0.9)), url("https://images.unsplash.com/photo-1497604401993-f2e9ce748969?auto=format&fit=crop&q=80&w=2000")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}>
+      <Box className="auth-panel branding-panel">
         <Box sx={{ zIndex: 2, position: 'relative' }}>
           <Typography className="branding-logo">Tales & Treasures</Typography>
           <Typography variant="h2" className="branding-quote" sx={{ color: '#fff', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>

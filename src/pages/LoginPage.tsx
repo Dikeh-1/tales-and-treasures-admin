@@ -147,7 +147,7 @@ export default function LoginPage() {
         setNeedsBiometricSetup(true);
         setAuthMethod('password');
         setError(
-          'No biometrics are registered for this account. Set it up now or switch to password sign in.',
+          'This account does not have biometrics configured. Please sign in with your password to complete setup.',
         );
       } else {
         setError(getErrorMessage(err, 'Login failed.'));
@@ -341,11 +341,7 @@ export default function LoginPage() {
     <Box className="auth-container">
       <div className="auth-background"></div>
 
-      <Box className="auth-panel branding-panel" sx={{
-        backgroundImage: 'linear-gradient(rgba(10, 79, 102, 0.7), rgba(6, 43, 56, 0.9)), url("https://images.unsplash.com/photo-1497604401993-f2e9ce748969?auto=format&fit=crop&q=80&w=2000")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}>
+      <Box className="auth-panel branding-panel">
         <Box sx={{ zIndex: 2, position: 'relative' }}>
           <Typography className="branding-logo">Tales & Treasures</Typography>
           <Typography variant="h2" className="branding-quote" sx={{ color: '#fff', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
@@ -398,47 +394,6 @@ export default function LoginPage() {
               void handlePrimaryAction();
             }}
           >
-            {authMode === 'login' && !needsBiometricSetup && (
-              <Box
-                className="auth-method-toggle"
-                sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 1, mb: 2 }}
-              >
-                <Button
-                  variant={authMethod === 'password' ? 'contained' : 'outlined'}
-                  onClick={() => {
-                    setAuthMethod('password');
-                    setError('');
-                  }}
-                  startIcon={<KeyRound />}
-                  fullWidth
-                >
-                  Sign in with Password
-                </Button>
-                <Button
-                  variant={authMethod === 'biometric' ? 'contained' : 'outlined'}
-                  onClick={() => {
-                    setAuthMethod('biometric');
-                    setError('');
-                  }}
-                  startIcon={<Fingerprint />}
-                  fullWidth
-                >
-                  Sign in with Fingerprint
-                </Button>
-                <Button
-                  variant={authMethod === 'biometric' ? 'contained' : 'outlined'}
-                  onClick={() => {
-                    setAuthMethod('biometric');
-                    setError('');
-                  }}
-                  startIcon={<UserPlus />}
-                  fullWidth
-                >
-                  Sign in with Face Capture
-                </Button>
-              </Box>
-            )}
-
             <TextField
               margin="normal"
               required
@@ -453,7 +408,7 @@ export default function LoginPage() {
               disabled={authMode === 'verifyDevice' || loading}
             />
 
-            {authMode === 'login' && authMethod === 'password' && !needsBiometricSetup && (
+            {authMode === 'login' && !needsBiometricSetup && (
               <TextField
                 margin="normal"
                 required
@@ -476,6 +431,50 @@ export default function LoginPage() {
                   ),
                 }}
               />
+            )}
+
+            {authMode === 'login' && !needsBiometricSetup && (
+              <Box sx={{ mt: 2 }}>
+                <Button
+                  onClick={() => void handlePasswordLogin()}
+                  fullWidth
+                  variant="contained"
+                  size="large"
+                  disabled={loading}
+                  startIcon={<KeyRound />}
+                  sx={{ py: 1.5 }}
+                >
+                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign in with Password'}
+                </Button>
+
+                <Box sx={{ my: 3, display: 'flex', alignItems: 'center', '&::before': { content: '""', flex: 1, borderTop: '1px solid rgba(255,255,255,0.2)' }, '&::after': { content: '""', flex: 1, borderTop: '1px solid rgba(255,255,255,0.2)' } }}>
+                  <Typography sx={{ mx: 2, color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', fontWeight: 600 }}>OR QUICK LOGIN</Typography>
+                </Box>
+
+                <Button
+                  onClick={() => void handleBiometricLogin()}
+                  fullWidth
+                  variant="outlined"
+                  size="large"
+                  disabled={loading}
+                  startIcon={<Fingerprint />}
+                  sx={{ py: 1.5, mb: 1.5, borderColor: '#cbd5e1', color: '#0f172a' }}
+                >
+                  Sign in with Fingerprint
+                </Button>
+
+                <Button
+                  onClick={() => void handleBiometricLogin()}
+                  fullWidth
+                  variant="outlined"
+                  size="large"
+                  disabled={loading}
+                  startIcon={<UserPlus />}
+                  sx={{ py: 1.5, borderColor: '#cbd5e1', color: '#0f172a' }}
+                >
+                  Sign in with Face Capture
+                </Button>
+              </Box>
             )}
 
             {authMode === 'verifyDevice' && (
@@ -519,17 +518,6 @@ export default function LoginPage() {
                 {loading ? <CircularProgress size={24} color="inherit" /> : 'Register Biometrics'}
               </Button>
             )}
-            {authMode === 'login' && !needsBiometricSetup && (
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                sx={{ mt: 3, mb: 2, py: 1.5, display: 'none' }}
-              >
-                Hidden Submit
-              </Button>
-            )}
 
             {error && (
               <Alert severity="error" sx={{ mt: 2 }}>
@@ -537,8 +525,8 @@ export default function LoginPage() {
               </Alert>
             )}
 
-            {authMode === 'login' && authMethod === 'password' && !needsBiometricSetup && (
-              <Typography variant="body2" align="center" sx={{ mt: 1 }}>
+            {authMode === 'login' && !needsBiometricSetup && (
+              <Typography variant="body2" align="center" sx={{ mt: 3 }}>
                 <Link
                   component="button"
                   type="button"
