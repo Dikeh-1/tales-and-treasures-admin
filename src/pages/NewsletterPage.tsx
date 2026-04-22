@@ -148,10 +148,9 @@ export default function NewsletterPage() {
     {
       field: 'sentAt',
       headerName: 'Date Sent',
-      type: 'dateTime',
       minWidth: 140,
       width: 200,
-      valueGetter: (params) => (params.value ? new Date(params.value) : null),
+      renderCell: (params) => params.value ? new Date(params.value).toLocaleString() : '-',
     },
     {
       field: 'actions',

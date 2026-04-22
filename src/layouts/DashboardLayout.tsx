@@ -57,6 +57,7 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import LogoutIcon from '@mui/icons-material/Logout';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 import InactivityWarningModal from '../components/InactivityWarningModal';
 
@@ -532,6 +533,12 @@ export default function DashboardLayout() {
           <Box sx={{ flexGrow: 1 }} />
 
           <Stack direction="row" spacing={2} alignItems="center">
+            <Tooltip title="Refresh Data">
+              <IconButton color="inherit" onClick={() => window.location.reload()}>
+                <RefreshIcon />
+              </IconButton>
+            </Tooltip>
+
             <IconButton color="inherit" onClick={toggleColorMode}>
               {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>

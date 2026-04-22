@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import {
   DataGrid,
+  GridActionsCellItem,
 } from '@mui/x-data-grid';
 import { XCircle } from 'lucide-react';
 import apiClient from '../api/apiClient';
@@ -120,16 +121,14 @@ export default function SubscriptionsPage() {
       getActions: (params) => {
         if (params.row.status === 'active') {
           return [
-            <Button
-              variant="outlined"
-              color="error"
-              size="small"
-              startIcon={<XCircle size={16} />}
+            <GridActionsCellItem
+              key="disable"
+              icon={<XCircle size={20} style={{ color: 'var(--mui-palette-error-main, red)' }} />}
+              label="Disable"
               onClick={() => handleDisableClick(params.id)}
               disabled={disabling}
-            >
-              Disable
-            </Button>,
+              showInMenu={false}
+            />,
           ];
         }
         return [];

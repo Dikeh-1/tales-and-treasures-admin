@@ -25,6 +25,7 @@ import { toast } from 'react-hot-toast';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import LockClockIcon from '@mui/icons-material/LockClock';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import DonationFormModal from '../components/DonationFormModal';
 
 const EDIT_WINDOW_MS = 3 * 60 * 1000;
@@ -62,6 +63,7 @@ export default function DonationsPage() {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [formModalOpen, setFormModalOpen] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<any>(null);
 
   /** Fetch donations */
@@ -91,7 +93,7 @@ export default function DonationsPage() {
     setIsSaving(true);
     const dataToSave = {
       ...data,
-      amount: data.type === 'Financial' && data.amount ? parseFloat(data.amount) : null,
+      amount: data.amount ? parseFloat(data.amount) : null,
       donationDate: data.donationDate ? new Date(data.donationDate) : new Date(),
     };
 
@@ -156,14 +158,17 @@ export default function DonationsPage() {
       },
       {
         field: 'amount',
-        headerName: 'Amount',
-        type: 'number',
+        headerName: 'Amount / Qty',
         width: 140,
-        valueFormatter: (value: any) => {
-          if (typeof value === 'number') {
-            return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value);
+        renderCell: (params) => {
+          if (params.value == null) return '-';
+          if (params.row.type === 'Financial') {
+            return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(params.value);
           }
-          return '';
+          if (params.row.type === 'Book') {
+            return `${params.value} Book(s)`;
+          }
+          return `${params.value} Item(s)`;
         },
       },
       { field: 'details', headerName: 'Details', flex: 1, minWidth: 160 },
@@ -183,6 +188,16 @@ export default function DonationsPage() {
           const editable = canEditManualDonation(row);
           const secondsLeft = getRemainingEditSeconds(row);
           return [
+            <GridActionsCellItem
+              key="view"
+              icon={<VisibilityIcon />}
+              label="View Details"
+              onClick={() => {
+                setItemToEdit(row);
+                setDetailsModalOpen(true);
+              }}
+              showInMenu={isXs}
+            />,
             <GridActionsCellItem
               key="edit"
               icon={editable ? <EditIcon /> : <LockClockIcon />}
@@ -227,7 +242,13 @@ export default function DonationsPage() {
                       <Chip label={row.type} size="small" />
                       {row.amount != null && (
                         <Chip
-                          label={new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(row.amount)}
+                          label={
+                            row.type === 'Financial'
+                              ? new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(row.amount)
+                              : row.type === 'Book'
+                              ? `${row.amount} Book(s)`
+                              : `${row.amount} Item(s)`
+                          }
                           size="small"
                         />
                       )}
@@ -348,6 +369,34 @@ export default function DonationsPage() {
         initialData={itemToEdit}
         loading={isSaving} // ✅ Pass loading state here
       />
+
+      {/* Details Preview Modal */}
+      <Dialog open={detailsModalOpen} onClose={() => setDetailsModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Donation Details</DialogTitle>
+        <DialogContent dividers>
+          {itemToEdit && (
+            <Stack spacing={2}>
+              <Typography><strong>Donor:</strong> {itemToEdit.donorName}</Typography>
+              <Typography><strong>Type:</strong> {itemToEdit.type}</Typography>
+              {itemToEdit.amount != null && (
+                <Typography>
+                  <strong>{itemToEdit.type === 'Financial' ? 'Amount:' : 'Quantity:'}</strong>{' '}
+                  {itemToEdit.type === 'Financial'
+                    ? new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(itemToEdit.amount)
+                    : itemToEdit.type === 'Book'
+                    ? `${itemToEdit.amount} Book(s)`
+                    : `${itemToEdit.amount} Item(s)`}
+                </Typography>
+              )}
+              <Typography><strong>Date:</strong> {new Date(itemToEdit.donationDate).toLocaleDateString()}</Typography>
+              <Typography><strong>Details:</strong><br />{itemToEdit.details || 'N/A'}</Typography>
+            </Stack>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDetailsModalOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }

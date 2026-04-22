@@ -217,11 +217,13 @@ export default function UsersPage() {
       getActions: (params) => {
         const actions = [
           <GridActionsCellItem 
+            key="edit"
             icon={<EditIcon />} 
             label="Edit" 
             onClick={handleEditClick(params.id as number)} 
           />,
           <GridActionsCellItem 
+            key="delete"
             icon={<DeleteIcon sx={{ color: 'error.main' }} />} 
             label="Delete" 
             onClick={handleDeleteClick(params.id as number)} 
@@ -232,6 +234,7 @@ export default function UsersPage() {
         if (params.row.isSubscribed) {
           actions.unshift(
             <GridActionsCellItem
+              key="unsubscribe"
               icon={<UnsubscribeIcon sx={{ color: 'warning.main' }} />}
               label="Unsubscribe"
               onClick={() => handleUnsubscribe(params.id as number)}

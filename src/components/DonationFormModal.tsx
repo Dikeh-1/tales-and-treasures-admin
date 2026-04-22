@@ -151,18 +151,20 @@ export default function DonationFormModal({
               </Select>
             </FormControl>
 
-            {/* Amount Field */}
-            {formData.type === 'Financial' && (
-              <TextField
-                label="Amount (₦)"
-                name="amount"
-                type="number"
-                value={formData.amount}
-                onChange={handleChange}
-                fullWidth
-                inputProps={{ min: 0, step: '0.01', inputMode: 'decimal' }}
-              />
-            )}
+            {/* Amount / Quantity Field */}
+            <TextField
+              label={formData.type === 'Financial' ? "Amount (₦)" : "Quantity"}
+              name="amount"
+              type="number"
+              value={formData.amount}
+              onChange={handleChange}
+              fullWidth
+              inputProps={{ 
+                min: 0, 
+                step: formData.type === 'Financial' ? '0.01' : '1', 
+                inputMode: formData.type === 'Financial' ? 'decimal' : 'numeric' 
+              }}
+            />
 
             {/* Details */}
             <TextField
