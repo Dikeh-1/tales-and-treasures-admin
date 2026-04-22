@@ -390,6 +390,7 @@ export default function LoginPage() {
           <Box
             component="form"
             noValidate
+            autoComplete="off"
             onSubmit={(event) => {
               event.preventDefault();
               void handlePrimaryAction();
@@ -402,7 +403,8 @@ export default function LoginPage() {
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
+              autoComplete="new-password"
+              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
               autoFocus={authMode !== 'verifyDevice'}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
@@ -418,7 +420,8 @@ export default function LoginPage() {
                 label="Password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
+                autoComplete="new-password"
+                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 disabled={loading}
@@ -486,6 +489,8 @@ export default function LoginPage() {
                 id="code"
                 label="6-Digit Verification Code"
                 name="code"
+                autoComplete="new-password"
+                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
                 autoFocus
                 value={code}
                 onChange={(event) => setCode(event.target.value)}
@@ -577,6 +582,8 @@ export default function LoginPage() {
             fullWidth
             label="Email"
             type="email"
+            autoComplete="new-password"
+            inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
             value={resetEmail}
             onChange={(event) => setResetEmail(event.target.value)}
           />
@@ -598,6 +605,8 @@ export default function LoginPage() {
             margin="normal"
             fullWidth
             label="Reset Code"
+            autoComplete="new-password"
+            inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
             value={resetCode}
             onChange={(event) => setResetCode(event.target.value)}
           />
@@ -606,6 +615,8 @@ export default function LoginPage() {
             fullWidth
             label="New Password"
             type={showResetPassword ? 'text' : 'password'}
+            autoComplete="new-password"
+            inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
             value={newPassword}
             onChange={(event) => setNewPassword(event.target.value)}
             InputProps={{
@@ -623,6 +634,8 @@ export default function LoginPage() {
             fullWidth
             label="Confirm New Password"
             type={showResetPassword ? 'text' : 'password'}
+            autoComplete="new-password"
+            inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
             value={confirmPassword}
             onChange={(event) => setConfirmPassword(event.target.value)}
           />

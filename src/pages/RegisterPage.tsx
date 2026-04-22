@@ -258,6 +258,7 @@ export default function RegistrationPage(): JSX.Element {
             <Box
               component="form"
               noValidate
+              autoComplete="off"
               onSubmit={(event) => {
                 event.preventDefault();
                 void handleInitiateRegistration();
@@ -267,6 +268,8 @@ export default function RegistrationPage(): JSX.Element {
                 label="Full Name"
                 fullWidth
                 margin="normal"
+                autoComplete="new-password"
+                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 required
@@ -277,6 +280,8 @@ export default function RegistrationPage(): JSX.Element {
                 type="email"
                 fullWidth
                 margin="normal"
+                autoComplete="new-password"
+                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
@@ -286,6 +291,8 @@ export default function RegistrationPage(): JSX.Element {
                 type={showPassword ? 'text' : 'password'}
                 fullWidth
                 margin="normal"
+                autoComplete="new-password"
+                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 required
@@ -305,6 +312,8 @@ export default function RegistrationPage(): JSX.Element {
                 type={showConfirmPassword ? 'text' : 'password'}
                 fullWidth
                 margin="normal"
+                autoComplete="new-password"
+                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 required
@@ -331,6 +340,7 @@ export default function RegistrationPage(): JSX.Element {
             <Box
               component="form"
               noValidate
+              autoComplete="off"
               onSubmit={(event) => {
                 event.preventDefault();
                 void handleVerifyCode();
@@ -343,6 +353,8 @@ export default function RegistrationPage(): JSX.Element {
                 label="Verification Code"
                 fullWidth
                 margin="normal"
+                autoComplete="new-password"
+                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
                 value={code}
                 onChange={(event) => setCode(event.target.value)}
                 required
