@@ -61,6 +61,8 @@ export default function LoginPage() {
   const [authMethod, setAuthMethod] = useState<AuthMethod>('password');
   const [needsBiometricSetup, setNeedsBiometricSetup] = useState(false);
   const [isCapturingFace, setIsCapturingFace] = useState(false);
+  const [resendDisabled, setResendDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(60);
 
   const [resetOpen, setResetOpen] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
@@ -202,6 +204,29 @@ export default function LoginPage() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendDeviceCode = async () => {
+    try {
+      const normalizedEmail = normalizeEmail(email);
+      await apiClient.get(`/auth/login-options?email=${encodeURIComponent(normalizedEmail)}`);
+      toast.success('A new device verification code has been sent to your email.');
+      setResendDisabled(true);
+      setCountdown(60);
+      
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setResendDisabled(false);
+            return 60;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to resend code.'));
     }
   };
 
@@ -554,17 +579,29 @@ export default function LoginPage() {
             )}
 
             {authMode === 'verifyDevice' && (
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                sx={{ mt: 3, mb: 2, py: 1.5 }}
-                disabled={loading}
-                startIcon={buttonIcon}
-              >
-                {loading ? <CircularProgress size={24} color="inherit" /> : buttonLabel}
-              </Button>
+              <Box sx={{ mt: 2 }}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  size="large"
+                  sx={{ py: 1.5, mb: 2 }}
+                  disabled={loading}
+                  startIcon={buttonIcon}
+                >
+                  {loading ? <CircularProgress size={24} color="inherit" /> : buttonLabel}
+                </Button>
+                
+                <Button
+                  onClick={() => void handleResendDeviceCode()}
+                  fullWidth
+                  variant="outlined"
+                  disabled={resendDisabled || loading}
+                  sx={{ py: 1 }}
+                >
+                  {resendDisabled ? `Resend Code in ${countdown}s` : 'Request New Code'}
+                </Button>
+              </Box>
             )}
             {authMode === 'login' && needsBiometricSetup && (
               <Button
