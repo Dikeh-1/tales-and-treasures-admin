@@ -39,6 +39,10 @@ import { toast } from 'react-hot-toast';
 import apiClient from '../api/apiClient';
 import { useTheme } from '@mui/material/styles';
 
+import ShaderBackground from '../components/ui/ShaderBackground';
+import { LampContainer } from '../components/ui/LampContainer';
+import '../styles/AuthPages.css';
+
 type DashboardStats = {
   totalDonations: number;
   booksDonated: number;
@@ -125,10 +129,13 @@ export default function DashboardPage(): JSX.Element {
   };
 
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        Welcome back, {user?.name?.split(' ')[0] || 'Admin'}!
-      </Typography>
+    <Box sx={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', borderRadius: 2 }}>
+      <ShaderBackground />
+      <LampContainer>
+        <Box sx={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '1200px', mx: 'auto', mt: 4, px: { xs: 2, md: 4 } }}>
+          <Typography variant="h4" gutterBottom sx={{ color: 'white', fontWeight: 'bold', mb: 4, textAlign: 'center' }}>
+            Welcome back, {user?.name?.split(' ')[0] || 'Admin'}!
+          </Typography>
 
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={3}>
@@ -298,6 +305,8 @@ export default function DashboardPage(): JSX.Element {
           </Paper>
         </Grid>
       </Grid>
+        </Box>
+      </LampContainer>
     </Box>
   );
 }
