@@ -24,6 +24,8 @@ import { Fingerprint, ShieldCheck, UserPlus, KeyRound, ScanFace } from 'lucide-r
 import LoadingOverlay from '../components/LoadingOverlay';
 import FaceCapture from '../components/FaceCapture';
 import { toast } from 'react-hot-toast';
+import ShaderBackground from '../components/ui/ShaderBackground';
+import { LampContainer } from '../components/ui/LampContainer';
 import '../styles/AuthPages.css';
 
 type AuthMode = 'login' | 'verifyDevice';
@@ -411,23 +413,12 @@ export default function LoginPage() {
         : 'Use your registered device to sign in securely.';
 
   return (
-    <Box className="auth-container">
-      <div className="auth-background"></div>
+    <Box className="auth-container" sx={{ position: 'relative', overflow: 'hidden' }}>
+      <ShaderBackground />
 
-      <Box className="auth-panel branding-panel">
-        <Box sx={{ zIndex: 2, position: 'relative' }}>
-          <Typography className="branding-logo">Tales & Treasures</Typography>
-          <Typography variant="h2" className="branding-quote" sx={{ color: '#fff', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
-            Calm control for the work that changes children’s stories.
-          </Typography>
-          <Typography className="branding-author" sx={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
-            Secure admin access for operations, outreach, and impact.
-          </Typography>
-        </Box>
-      </Box>
-
-      <Box className="auth-panel form-panel">
-        <Box className="auth-form-container" sx={{ position: 'relative' }}>
+      <LampContainer>
+        <Box className="auth-panel form-panel">
+          <Box className="auth-form-container" sx={{ position: 'relative', zIndex: 10 }}>
           {loading && (
             <LoadingOverlay
               message={
@@ -467,74 +458,181 @@ export default function LoginPage() {
               event.preventDefault();
               void handlePrimaryAction();
             }}
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: authMode === 'login' && !needsBiometricSetup ? 'row' : 'column' },
+              gap: 4
+            }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              autoFocus={authMode !== 'verifyDevice'}
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              disabled={authMode === 'verifyDevice' || loading}
-            />
-
-            {authMode === 'login' && !needsBiometricSetup && (
+            {/* Left Column: Email / Password */}
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <TextField
                 margin="normal"
                 required
                 fullWidth
-                id="password"
-                label="Password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
+                id="email"
+                label="Email Address"
+                name="email"
                 autoComplete="new-password"
                 inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                disabled={loading}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+                autoFocus={authMode !== 'verifyDevice'}
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                disabled={authMode === 'verifyDevice' || loading}
               />
-            )}
 
-            {authMode === 'login' && !needsBiometricSetup && (
-              <Box sx={{ mt: 2 }}>
+              {authMode === 'login' && !needsBiometricSetup && (
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="password"
+                  label="Password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  disabled={loading}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+
+              {authMode === 'login' && !needsBiometricSetup && (
+                <Box sx={{ mt: 2 }}>
+                  <Button
+                    onClick={() => void handlePasswordLogin()}
+                    fullWidth
+                    variant="contained"
+                    size="medium"
+                    disabled={loading}
+                    startIcon={<KeyRound />}
+                    sx={{ py: 1 }}
+                  >
+                    {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign in with Password'}
+                  </Button>
+                </Box>
+              )}
+
+              {authMode === 'verifyDevice' && (
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="code"
+                  label="6-Digit Verification Code"
+                  name="code"
+                  autoComplete="new-password"
+                  inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
+                  autoFocus
+                  value={code}
+                  onChange={(event) => setCode(event.target.value)}
+                  disabled={loading}
+                />
+              )}
+
+              {authMode === 'verifyDevice' && (
+                <Box sx={{ mt: 2 }}>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    size="medium"
+                    sx={{ py: 1, mb: 2 }}
+                    disabled={loading}
+                    startIcon={buttonIcon}
+                  >
+                    {loading ? <CircularProgress size={24} color="inherit" /> : buttonLabel}
+                  </Button>
+                  
+                  <Button
+                    onClick={() => void handleResendDeviceCode()}
+                    fullWidth
+                    variant="outlined"
+                    disabled={resendDisabled || loading}
+                    sx={{ py: 0.5 }}
+                  >
+                    {resendDisabled ? `Resend Code in ${countdown}s` : 'Request New Code'}
+                  </Button>
+                </Box>
+              )}
+
+              {authMode === 'login' && needsBiometricSetup && (
                 <Button
-                  onClick={() => void handlePasswordLogin()}
+                  type="submit"
                   fullWidth
                   variant="contained"
-                  size="large"
+                  size="medium"
+                  sx={{ mt: 3, mb: 2, py: 1 }}
                   disabled={loading}
-                  startIcon={<KeyRound />}
-                  sx={{ py: 1.5 }}
+                  startIcon={<UserPlus />}
                 >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign in with Password'}
+                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Register Biometrics'}
                 </Button>
+              )}
 
-                <Box sx={{ my: 3, display: 'flex', alignItems: 'center', '&::before': { content: '""', flex: 1, borderTop: '1px solid rgba(255,255,255,0.2)' }, '&::after': { content: '""', flex: 1, borderTop: '1px solid rgba(255,255,255,0.2)' } }}>
-                  <Typography sx={{ mx: 2, color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', fontWeight: 600 }}>OR QUICK LOGIN</Typography>
-                </Box>
+              {error && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                  {error}
+                </Alert>
+              )}
+
+              {authMode === 'login' && !needsBiometricSetup && (
+                <Typography variant="body2" align="center" sx={{ mt: 3 }}>
+                  <Link
+                    component="button"
+                    type="button"
+                    variant="body2"
+                    onClick={openResetPasswordDialog}
+                  >
+                    Forgot password?
+                  </Link>
+                </Typography>
+              )}
+
+              {!needsBiometricSetup && (
+                <Typography variant="body2" align="center" className="auth-link-text">
+                  First time here?{' '}
+                  <Link component={RouterLink} to="/register" variant="body2">
+                    Register a new admin account.
+                  </Link>
+                </Typography>
+              )}
+            </Box>
+
+            {/* Right Column: Quick Sign In */}
+            {authMode === 'login' && !needsBiometricSetup && (
+              <Box sx={{ 
+                flex: 1, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                justifyContent: 'center',
+                borderLeft: { xs: 'none', md: '1px solid rgba(255,255,255,0.2)' },
+                borderTop: { xs: '1px solid rgba(255,255,255,0.2)', md: 'none' },
+                pt: { xs: 3, md: 0 },
+                pl: { xs: 0, md: 4 }
+              }}>
+                <Typography align="center" sx={{ mb: 3, color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', fontWeight: 600 }}>
+                  QUICK SIGN IN
+                </Typography>
 
                 <Button
                   onClick={() => void handleBiometricLogin('fingerprint')}
                   fullWidth
                   variant="outlined"
-                  size="large"
+                  size="medium"
                   disabled={loading}
                   startIcon={<Fingerprint />}
-                  sx={{ py: 1.5, mb: 1.5, borderColor: '#cbd5e1', color: '#0f172a' }}
+                  sx={{ py: 1, mb: 2, borderColor: '#cbd5e1', color: '#0f172a' }}
                 >
                   Sign in with Fingerprint
                 </Button>
@@ -551,102 +649,19 @@ export default function LoginPage() {
                   }}
                   fullWidth
                   variant="outlined"
-                  size="large"
+                  size="medium"
                   disabled={loading}
                   startIcon={<ScanFace />}
-                  sx={{ py: 1.5, borderColor: '#cbd5e1', color: '#0f172a' }}
+                  sx={{ py: 1, borderColor: '#cbd5e1', color: '#0f172a' }}
                 >
                   Sign in with Face Capture
                 </Button>
               </Box>
             )}
-
-            {authMode === 'verifyDevice' && (
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="code"
-                label="6-Digit Verification Code"
-                name="code"
-                autoComplete="new-password"
-                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-                autoFocus
-                value={code}
-                onChange={(event) => setCode(event.target.value)}
-                disabled={loading}
-              />
-            )}
-
-            {authMode === 'verifyDevice' && (
-              <Box sx={{ mt: 2 }}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  sx={{ py: 1.5, mb: 2 }}
-                  disabled={loading}
-                  startIcon={buttonIcon}
-                >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : buttonLabel}
-                </Button>
-                
-                <Button
-                  onClick={() => void handleResendDeviceCode()}
-                  fullWidth
-                  variant="outlined"
-                  disabled={resendDisabled || loading}
-                  sx={{ py: 1 }}
-                >
-                  {resendDisabled ? `Resend Code in ${countdown}s` : 'Request New Code'}
-                </Button>
-              </Box>
-            )}
-            {authMode === 'login' && needsBiometricSetup && (
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                sx={{ mt: 3, mb: 2, py: 1.5 }}
-                disabled={loading}
-                startIcon={<UserPlus />}
-              >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Register Biometrics'}
-              </Button>
-            )}
-
-            {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {error}
-              </Alert>
-            )}
-
-            {authMode === 'login' && !needsBiometricSetup && (
-              <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-                <Link
-                  component="button"
-                  type="button"
-                  variant="body2"
-                  onClick={openResetPasswordDialog}
-                >
-                  Forgot password?
-                </Link>
-              </Typography>
-            )}
-
-            {!needsBiometricSetup && (
-              <Typography variant="body2" align="center" className="auth-link-text">
-                First time here?{' '}
-                <Link component={RouterLink} to="/register" variant="body2">
-                  Register a new admin account.
-                </Link>
-              </Typography>
-            )}
           </Box>
         </Box>
-      </Box>
+        </Box>
+      </LampContainer>
 
       <Dialog
         className="auth-reset-dialog"

@@ -29,6 +29,8 @@ import { Fingerprint, CheckCircle, ScanFace } from 'lucide-react';
 import '../styles/AuthPages.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 import FaceCapture from '../components/FaceCapture';
+import ShaderBackground from '../components/ui/ShaderBackground';
+import { LampContainer } from '../components/ui/LampContainer';
 
 const steps = ['Details', 'Verify Email', 'Fingerprint', 'Face Capture', 'Success'];
 
@@ -226,21 +228,12 @@ export default function RegistrationPage(): JSX.Element {
   })();
 
   return (
-    <Box className="auth-container">
-      <Box className="auth-panel branding-panel">
-        <Box sx={{ zIndex: 2, position: 'relative' }}>
-          <Typography className="branding-logo">Tales & Treasures</Typography>
-          <Typography variant="h2" className="branding-quote" sx={{ color: '#fff', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
-            Calm systems. Clear impact.
-          </Typography>
-          <Typography className="branding-author" sx={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
-            Securely set up your admin workspace with mandatory 3-factor access.
-          </Typography>
-        </Box>
-      </Box>
+    <Box className="auth-container" sx={{ position: 'relative', overflow: 'hidden' }}>
+      <ShaderBackground />
 
-      <Box className="auth-panel form-panel">
-        <Box className="auth-form-container" role="main" sx={{ position: 'relative' }}>
+      <LampContainer>
+        <Box className="auth-panel form-panel">
+          <Box className="auth-form-container" role="main" sx={{ position: 'relative', zIndex: 10 }}>
           {loading && <LoadingOverlay message={overlayMessage} />}
 
           <Typography component="h1" variant="h4" align="center" className="auth-title">
@@ -468,8 +461,9 @@ export default function RegistrationPage(): JSX.Element {
               </Link>
             </Typography>
           )}
+          </Box>
         </Box>
-      </Box>
+      </LampContainer>
 
       <Dialog open={disclaimerOpen} onClose={handleCancelDisclaimer} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ color: 'error.main', fontWeight: 'bold' }}>
