@@ -29,8 +29,7 @@ import { Fingerprint, CheckCircle, ScanFace } from 'lucide-react';
 import '../styles/AuthPages.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 import FaceCapture from '../components/FaceCapture';
-import ShaderBackground from '../components/ui/ShaderBackground';
-import { LampContainer } from '../components/ui/LampContainer';
+import AnimatedAuthLayout from '../components/ui/AnimatedAuthLayout';
 
 const steps = ['Details', 'Verify Email', 'Fingerprint', 'Face Capture', 'Success'];
 
@@ -61,6 +60,7 @@ export default function RegistrationPage(): JSX.Element {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [disclaimerOpen, setDisclaimerOpen] = useState<boolean>(false);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
 
   const countdownRef = useRef<number | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -227,22 +227,23 @@ export default function RegistrationPage(): JSX.Element {
     return 'Finalizing...';
   })();
 
+  const title = activeStep === 4 ? "Configuration Complete!" : "Admin Registration";
+  const subtitle = activeStep === 4 
+    ? "Welcome aboard, Admin. All 3 factors are strictly secured." 
+    : "Complete all steps to secure your account.";
+
   return (
-    <Box className="auth-container" sx={{ position: 'relative', overflow: 'hidden' }}>
-      <ShaderBackground />
+    <AnimatedAuthLayout
+      title={title}
+      subtitle={subtitle}
+      passwordLength={password.length}
+      showPassword={showPassword}
+      isTyping={isTyping}
+    >
+      <Box sx={{ position: 'relative', width: '100%' }}>
+        {loading && <LoadingOverlay message={overlayMessage} />}
 
-      <LampContainer>
-        <Box className="auth-panel form-panel">
-          <Box className="auth-form-container" role="main" sx={{ position: 'relative', zIndex: 10 }}>
-          {loading && <LoadingOverlay message={overlayMessage} />}
-
-          <Typography component="h1" variant="h4" align="center" className="auth-title">
-            Admin Registration
-          </Typography>
-          <Typography align="center" color="text.secondary" sx={{ mb: 2 }}>
-            Complete all steps to secure your account.
-          </Typography>
-
+        {activeStep < 4 && (
           <Stepper
             activeStep={activeStep}
             className="auth-stepper"
@@ -263,207 +264,211 @@ export default function RegistrationPage(): JSX.Element {
               </Step>
             ))}
           </Stepper>
+        )}
 
-          {activeStep === 0 && (
-            <Box
-              component="form"
-              noValidate
-              autoComplete="off"
-              onSubmit={(event) => {
-                event.preventDefault();
-                void handleInitiateRegistration();
+        {activeStep === 0 && (
+          <Box
+            component="form"
+            noValidate
+            autoComplete="off"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void handleInitiateRegistration();
+            }}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
+            <TextField
+              label="Full Name"
+              fullWidth
+              margin="normal"
+              autoComplete="new-password"
+              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              onFocus={() => setIsTyping(true)}
+              onBlur={() => setIsTyping(false)}
+              required
+              autoFocus
+            />
+            <TextField
+              label="Email Address"
+              type="email"
+              fullWidth
+              margin="normal"
+              autoComplete="new-password"
+              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              onFocus={() => setIsTyping(true)}
+              onBlur={() => setIsTyping(false)}
+              required
+            />
+            <TextField
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              fullWidth
+              margin="normal"
+              autoComplete="new-password"
+              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              onFocus={() => setIsTyping(true)}
+              onBlur={() => setIsTyping(false)}
+              required
+              helperText="At least 8 characters with letters and numbers."
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
-            >
-              <TextField
-                label="Full Name"
-                fullWidth
-                margin="normal"
-                autoComplete="new-password"
-                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                required
-                autoFocus
-              />
-              <TextField
-                label="Email Address"
-                type="email"
-                fullWidth
-                margin="normal"
-                autoComplete="new-password"
-                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-              />
-              <TextField
-                label="Password"
-                type={showPassword ? 'text' : 'password'}
-                fullWidth
-                margin="normal"
-                autoComplete="new-password"
-                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-                helperText="At least 8 characters with letters and numbers."
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <TextField
-                label="Confirm Password"
-                type={showConfirmPassword ? 'text' : 'password'}
-                fullWidth
-                margin="normal"
-                autoComplete="new-password"
-                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-                required
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
-                <Button variant="contained" type="submit" disabled={loading} size="large">
-                  {loading ? <CircularProgress size={20} /> : 'Continue Setup'}
-                </Button>
-              </Box>
-            </Box>
-          )}
-
-          {activeStep === 1 && (
-            <Box
-              component="form"
-              noValidate
-              autoComplete="off"
-              onSubmit={(event) => {
-                event.preventDefault();
-                void handleVerifyCode();
+            />
+            <TextField
+              label="Confirm Password"
+              type={showConfirmPassword ? 'text' : 'password'}
+              fullWidth
+              margin="normal"
+              autoComplete="new-password"
+              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              onFocus={() => setIsTyping(true)}
+              onBlur={() => setIsTyping(false)}
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
-            >
-              <Typography color="text.secondary" align="center" sx={{ mb: 2 }}>
-                We sent a 6-digit code to <strong>{email}</strong>. Enter it below.
-              </Typography>
-              <TextField
-                label="Verification Code"
-                fullWidth
-                margin="normal"
-                autoComplete="new-password"
-                inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-                value={code}
-                onChange={(event) => setCode(event.target.value)}
-                required
-              />
-              {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 3 }}>
-                <Button onClick={() => void handleResend()} disabled={resendDisabled} size="small">
-                  {resendDisabled ? `Resend in ${countdown}s` : 'Resend Code'}
-                </Button>
-                <Button variant="contained" type="submit" disabled={loading} size="large">
-                  {loading ? <CircularProgress size={20} /> : 'Verify Email'}
-                </Button>
-              </Box>
+            />
+            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+              <Button variant="contained" type="submit" disabled={loading} size="large">
+                {loading ? <CircularProgress size={20} /> : 'Continue Setup'}
+              </Button>
             </Box>
-          )}
+          </Box>
+        )}
 
-          {activeStep === 2 && (
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Step 2: Fingerprint Configuration
-              </Typography>
-              <Typography color="text.secondary" sx={{ mb: 4 }}>
-                For absolute security, we require you to register a physical fingerprint on this device.
-              </Typography>
+        {activeStep === 1 && (
+          <Box
+            component="form"
+            noValidate
+            autoComplete="off"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void handleVerifyCode();
+            }}
+          >
+            <Typography color="text.secondary" align="center" sx={{ mb: 2 }}>
+              We sent a 6-digit code to <strong>{email}</strong>. Enter it below.
+            </Typography>
+            <TextField
+              label="Verification Code"
+              fullWidth
+              margin="normal"
+              autoComplete="new-password"
+              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
+              value={code}
+              onChange={(event) => setCode(event.target.value)}
+              onFocus={() => setIsTyping(true)}
+              onBlur={() => setIsTyping(false)}
+              required
+            />
+            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 3 }}>
+              <Button onClick={() => void handleResend()} disabled={resendDisabled} size="small">
+                {resendDisabled ? `Resend in ${countdown}s` : 'Resend Code'}
+              </Button>
+              <Button variant="contained" type="submit" disabled={loading} size="large">
+                {loading ? <CircularProgress size={20} /> : 'Verify Email'}
+              </Button>
+            </Box>
+          </Box>
+        )}
 
+        {activeStep === 2 && (
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              Step 2: Fingerprint Configuration
+            </Typography>
+            <Typography color="text.secondary" sx={{ mb: 4 }}>
+              For absolute security, we require you to register a physical fingerprint on this device.
+            </Typography>
+
+            <Button
+              onClick={() => void handleBiometricRegister('fingerprint')}
+              variant="contained"
+              size="large"
+              fullWidth
+              startIcon={<Fingerprint />}
+              disabled={loading}
+              sx={{ mb: 2, py: 1.5 }}
+            >
+              Scan Fingerprint
+            </Button>
+
+            {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
+          </Box>
+        )}
+
+        {activeStep === 3 && (
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              Step 3: Face Capture Configuration
+            </Typography>
+            <Typography color="text.secondary" sx={{ mb: 4 }}>
+              Finally, register your face capture. This acts as your independent third authentication factor.
+            </Typography>
+
+            {isCapturingFace ? (
+              <FaceCapture 
+                onCapture={handleFaceCapture} 
+                onCancel={() => setIsCapturingFace(false)} 
+              />
+            ) : (
               <Button
-                onClick={() => void handleBiometricRegister('fingerprint')}
+                onClick={() => setIsCapturingFace(true)}
                 variant="contained"
                 size="large"
                 fullWidth
-                startIcon={<Fingerprint />}
+                startIcon={<ScanFace />}
                 disabled={loading}
                 sx={{ mb: 2, py: 1.5 }}
               >
-                Scan Fingerprint
+                Scan Face
               </Button>
+            )}
 
-              {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
-            </Box>
-          )}
-
-          {activeStep === 3 && (
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Step 3: Face Capture Configuration
-              </Typography>
-              <Typography color="text.secondary" sx={{ mb: 4 }}>
-                Finally, register your face capture. This acts as your independent third authentication factor.
-              </Typography>
-
-              {isCapturingFace ? (
-                <FaceCapture 
-                  onCapture={handleFaceCapture} 
-                  onCancel={() => setIsCapturingFace(false)} 
-                />
-              ) : (
-                <Button
-                  onClick={() => setIsCapturingFace(true)}
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                  startIcon={<ScanFace />}
-                  disabled={loading}
-                  sx={{ mb: 2, py: 1.5 }}
-                >
-                  Scan Face
-                </Button>
-              )}
-
-              {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
-            </Box>
-          )}
-
-          {activeStep === 4 && (
-            <Box sx={{ textAlign: 'center', p: 3 }}>
-              <CheckCircle size={64} style={{ color: '#34d399', marginBottom: '16px' }} />
-              <Typography variant="h5" gutterBottom className="auth-title">
-                Configuration Complete!
-              </Typography>
-              <Typography className="auth-subtitle">
-                Welcome aboard, Admin. All 3 factors are strictly secured.
-              </Typography>
-              <Button component={RouterLink} to="/login" variant="contained" size="large" fullWidth sx={{ mt: 4 }}>
-                Proceed to Secure Login
-              </Button>
-            </Box>
-          )}
-
-          {activeStep < 4 && (
-            <Typography variant="body2" align="center" className="auth-link-text">
-              Already have an account?{' '}
-              <Link component={RouterLink} to="/login" variant="body2">
-                Sign In
-              </Link>
-            </Typography>
-          )}
+            {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
           </Box>
-        </Box>
-      </LampContainer>
+        )}
+
+        {activeStep === 4 && (
+          <Box sx={{ textAlign: 'center', p: 3 }}>
+            <CheckCircle size={64} style={{ color: '#34d399', marginBottom: '16px', margin: '0 auto' }} />
+            <Button component={RouterLink} to="/login" variant="contained" size="large" fullWidth sx={{ mt: 4 }}>
+              Proceed to Secure Login
+            </Button>
+          </Box>
+        )}
+
+        {activeStep < 4 && (
+          <Typography variant="body2" align="center" sx={{ mt: 3, mb: 2 }}>
+            Already have an account?{' '}
+            <Link component={RouterLink} to="/login" variant="body2" sx={{ fontWeight: 600 }}>
+              Sign In
+            </Link>
+          </Typography>
+        )}
+      </Box>
 
       <Dialog open={disclaimerOpen} onClose={handleCancelDisclaimer} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ color: 'error.main', fontWeight: 'bold' }}>
@@ -486,6 +491,6 @@ export default function RegistrationPage(): JSX.Element {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </AnimatedAuthLayout>
   );
 }

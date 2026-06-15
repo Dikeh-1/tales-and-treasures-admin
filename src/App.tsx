@@ -23,6 +23,7 @@ import SubscriptionsPage from './pages/SubscriptionsPage';
 import StoryBridgePage from './pages/StoryBridgePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import EmailVerificationPage from './pages/EmailVerificationPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import NotFoundPage from './pages/NotFoundPage';
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
   },
   // THIS IS THE FIX: Moving the verification route here makes it public
   {
