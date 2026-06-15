@@ -515,17 +515,7 @@ export default function AnimatedAuthLayout({
           </div>
         </div>
 
-        <div className="relative z-20 flex items-center gap-8 text-sm text-slate-500">
-          <a href="#" className="hover:text-slate-800 transition-colors">
-            Privacy Policy
-          </a>
-          <a href="#" className="hover:text-slate-800 transition-colors">
-            Terms of Service
-          </a>
-          <a href="#" className="hover:text-slate-800 transition-colors">
-            Contact
-          </a>
-        </div>
+
       </div>
 
       {/* Right Content Section */}
