@@ -293,12 +293,12 @@ export default function AnimatedAuthLayout({
   const orangePos = calculatePosition(orangeRef);
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-slate-50">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-[#0A0A0B]">
       {/* Left Content Section */}
-      <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-[#EC4899] via-[#8B5CF6] to-[#3B82F6] p-12 text-white">
+      <div className="relative hidden lg:flex flex-col justify-between bg-[#E4E4E7] p-12 overflow-hidden">
         <div className="relative z-20">
-          <div className="flex items-center gap-2 text-xl font-bold tracking-wider">
-            <div className="size-10 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+          <div className="flex items-center gap-2 text-xl font-bold tracking-wider text-slate-900">
+            <div className="size-10 rounded-lg bg-black/5 flex items-center justify-center">
               <Sparkles className="size-5" />
             </div>
             <span>TALES & TREASURES</span>
@@ -476,39 +476,34 @@ export default function AnimatedAuthLayout({
           </div>
         </div>
 
-        <div className="relative z-20 flex items-center gap-8 text-sm text-white/60">
-          <a href="#" className="hover:text-white transition-colors">
+        <div className="relative z-20 flex items-center gap-8 text-sm text-slate-500">
+          <a href="#" className="hover:text-slate-800 transition-colors">
             Privacy Policy
           </a>
-          <a href="#" className="hover:text-white transition-colors">
+          <a href="#" className="hover:text-slate-800 transition-colors">
             Terms of Service
           </a>
-          <a href="#" className="hover:text-white transition-colors">
+          <a href="#" className="hover:text-slate-800 transition-colors">
             Contact
           </a>
         </div>
-
-        {/* Decorative elements */}
-        <div className="absolute inset-0 bg-white/[0.05] bg-[size:20px_20px] pointer-events-none" />
-        <div className="absolute top-1/4 right-1/4 size-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/4 left-1/4 size-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
       </div>
 
       {/* Right Content Section */}
-      <div className="flex items-center justify-center p-8 relative overflow-y-auto w-full">
-        <div className="w-full max-w-[500px]">
+      <div className="flex items-center justify-center p-8 relative overflow-y-auto w-full text-zinc-100">
+        <div className="w-full max-w-[400px]">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-2 text-lg font-bold mb-12">
-            <div className="size-10 rounded-lg bg-pink-500/10 flex items-center justify-center">
-              <Sparkles className="size-5 text-pink-500" />
+            <div className="size-10 rounded-lg bg-zinc-800 flex items-center justify-center">
+              <Sparkles className="size-5 text-zinc-100" />
             </div>
             <span>TALES & TREASURES</span>
           </div>
 
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-extrabold tracking-tight mb-3 text-slate-900">{title}</h1>
-            <p className="text-slate-500 text-base">{subtitle}</p>
+            <h1 className="text-3xl font-bold tracking-tight mb-2 text-zinc-100">{title}</h1>
+            <p className="text-zinc-400 text-sm">{subtitle}</p>
           </div>
 
           {/* Dynamic Form Content */}

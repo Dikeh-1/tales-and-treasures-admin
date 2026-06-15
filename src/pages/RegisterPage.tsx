@@ -1,23 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Alert,
   CircularProgress,
-  Stepper,
-  Step,
-  StepLabel,
-  Link,
-  InputAdornment,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -267,166 +251,207 @@ export default function RegistrationPage(): JSX.Element {
         )}
 
         {activeStep === 0 && (
-          <Box
-            component="form"
+          <form
             noValidate
             autoComplete="off"
             onSubmit={(event) => {
               event.preventDefault();
               void handleInitiateRegistration();
             }}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+            className="flex flex-col gap-4 w-full"
           >
-            <TextField
-              label="Full Name"
-              fullWidth
-              margin="normal"
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-              required
-              autoFocus
-            />
-            <TextField
-              label="Email Address"
-              type="email"
-              fullWidth
-              margin="normal"
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-              required
-            />
-            <TextField
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              fullWidth
-              margin="normal"
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-              required
-              helperText="At least 8 characters with letters and numbers."
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              label="Confirm Password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              fullWidth
-              margin="normal"
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
-              <Button variant="contained" type="submit" disabled={loading} size="large">
-                {loading ? <CircularProgress size={20} /> : 'Continue Setup'}
-              </Button>
-            </Box>
-          </Box>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name" className="text-sm font-medium text-zinc-300">
+                Full Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                autoComplete="name"
+                required
+                autoFocus
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                onFocus={() => setIsTyping(true)}
+                onBlur={() => setIsTyping(false)}
+                className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+              />
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="text-sm font-medium text-zinc-300">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                onFocus={() => setIsTyping(true)}
+                onBlur={() => setIsTyping(false)}
+                className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="password" className="text-sm font-medium text-zinc-300">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  onFocus={() => setIsTyping(true)}
+                  onBlur={() => setIsTyping(false)}
+                  className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 pl-4 pr-12 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
+                >
+                  {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                </button>
+              </div>
+              <p className="text-xs text-zinc-500">At least 8 characters with letters and numbers.</p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium text-zinc-300">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  required
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  onFocus={() => setIsTyping(true)}
+                  onBlur={() => setIsTyping(false)}
+                  className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 pl-4 pr-12 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
+                >
+                  {showConfirmPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-4 text-sm text-red-400 mt-2">
+                {error}
+              </div>
+            )}
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="h-12 w-full rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors mt-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? <CircularProgress size={20} color="inherit" /> : 'Continue Setup'}
+            </button>
+          </form>
         )}
 
         {activeStep === 1 && (
-          <Box
-            component="form"
+          <form
             noValidate
             autoComplete="off"
             onSubmit={(event) => {
               event.preventDefault();
               void handleVerifyCode();
             }}
+            className="flex flex-col gap-4 w-full"
           >
-            <Typography color="text.secondary" align="center" sx={{ mb: 2 }}>
-              We sent a 6-digit code to <strong>{email}</strong>. Enter it below.
-            </Typography>
-            <TextField
-              label="Verification Code"
-              fullWidth
-              margin="normal"
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-              required
-            />
-            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 3 }}>
-              <Button onClick={() => void handleResend()} disabled={resendDisabled} size="small">
+            <div className="text-center text-sm text-zinc-400 mb-2">
+              We sent a 6-digit code to <strong className="text-zinc-200">{email}</strong>. Enter it below.
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="code" className="text-sm font-medium text-zinc-300">
+                Verification Code
+              </label>
+              <input
+                id="code"
+                name="code"
+                required
+                value={code}
+                onChange={(event) => setCode(event.target.value)}
+                onFocus={() => setIsTyping(true)}
+                onBlur={() => setIsTyping(false)}
+                className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all tracking-[0.5em] text-center text-xl font-mono"
+              />
+            </div>
+
+            {error && (
+              <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-4 text-sm text-red-400 mt-2">
+                {error}
+              </div>
+            )}
+
+            <div className="flex items-center justify-between gap-4 mt-2">
+              <button
+                type="button"
+                onClick={() => void handleResend()}
+                disabled={resendDisabled || loading}
+                className="text-sm font-medium text-zinc-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 {resendDisabled ? `Resend in ${countdown}s` : 'Resend Code'}
-              </Button>
-              <Button variant="contained" type="submit" disabled={loading} size="large">
-                {loading ? <CircularProgress size={20} /> : 'Verify Email'}
-              </Button>
-            </Box>
-          </Box>
+              </button>
+              
+              <button
+                type="submit"
+                disabled={loading}
+                className="h-12 px-8 rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed flex-1"
+              >
+                {loading ? <CircularProgress size={20} color="inherit" /> : 'Verify Email'}
+              </button>
+            </div>
+          </form>
         )}
 
         {activeStep === 2 && (
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h5" sx={{ mb: 2 }}>
-              Step 2: Fingerprint Configuration
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 4 }}>
+          <div className="flex flex-col gap-4 w-full text-center">
+            <h3 className="text-xl font-semibold text-zinc-100">Step 2: Fingerprint Configuration</h3>
+            <p className="text-sm text-zinc-400 mb-4">
               For absolute security, we require you to register a physical fingerprint on this device.
-            </Typography>
+            </p>
 
-            <Button
+            <button
               onClick={() => void handleBiometricRegister('fingerprint')}
-              variant="contained"
-              size="large"
-              fullWidth
-              startIcon={<Fingerprint />}
               disabled={loading}
-              sx={{ mb: 2, py: 1.5 }}
+              className="h-12 w-full rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
+              <Fingerprint size={20} />
               Scan Fingerprint
-            </Button>
+            </button>
 
-            {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
-          </Box>
+            {error && (
+              <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-4 text-sm text-red-400 mt-2">
+                {error}
+              </div>
+            )}
+          </div>
         )}
 
         {activeStep === 3 && (
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h5" sx={{ mb: 2 }}>
-              Step 3: Face Capture Configuration
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 4 }}>
+          <div className="flex flex-col gap-4 w-full text-center">
+            <h3 className="text-xl font-semibold text-zinc-100">Step 3: Face Capture Configuration</h3>
+            <p className="text-sm text-zinc-400 mb-4">
               Finally, register your face capture. This acts as your independent third authentication factor.
-            </Typography>
+            </p>
 
             {isCapturingFace ? (
               <FaceCapture 
@@ -434,63 +459,81 @@ export default function RegistrationPage(): JSX.Element {
                 onCancel={() => setIsCapturingFace(false)} 
               />
             ) : (
-              <Button
+              <button
                 onClick={() => setIsCapturingFace(true)}
-                variant="contained"
-                size="large"
-                fullWidth
-                startIcon={<ScanFace />}
                 disabled={loading}
-                sx={{ mb: 2, py: 1.5 }}
+                className="h-12 w-full rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
+                <ScanFace size={20} />
                 Scan Face
-              </Button>
+              </button>
             )}
 
-            {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
-          </Box>
+            {error && (
+              <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-4 text-sm text-red-400 mt-2">
+                {error}
+              </div>
+            )}
+          </div>
         )}
 
         {activeStep === 4 && (
-          <Box sx={{ textAlign: 'center', p: 3 }}>
-            <CheckCircle size={64} style={{ color: '#34d399', marginBottom: '16px', margin: '0 auto' }} />
-            <Button component={RouterLink} to="/login" variant="contained" size="large" fullWidth sx={{ mt: 4 }}>
+          <div className="flex flex-col items-center gap-4 w-full text-center py-4">
+            <CheckCircle size={64} className="text-emerald-400 mb-2" />
+            
+            <RouterLink 
+              to="/login"
+              className="h-12 w-full rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors mt-6 flex items-center justify-center"
+            >
               Proceed to Secure Login
-            </Button>
-          </Box>
+            </RouterLink>
+          </div>
         )}
 
         {activeStep < 4 && (
-          <Typography variant="body2" align="center" sx={{ mt: 3, mb: 2 }}>
+          <div className="text-center text-sm text-zinc-400 mt-6 mb-4">
             Already have an account?{' '}
-            <Link component={RouterLink} to="/login" variant="body2" sx={{ fontWeight: 600 }}>
+            <RouterLink to="/login" className="font-semibold text-white hover:underline">
               Sign In
-            </Link>
-          </Typography>
+            </RouterLink>
+          </div>
         )}
-      </Box>
 
-      <Dialog open={disclaimerOpen} onClose={handleCancelDisclaimer} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ color: 'error.main', fontWeight: 'bold' }}>
-          ⚠️ Strict Hardware Requirements
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ mb: 2 }}>
-            To proceed with registration, this device <strong>MUST</strong> be equipped with a hardware <strong>Fingerprint Sensor</strong> and a <strong>Camera</strong>.
-          </DialogContentText>
-          <DialogContentText>
-            If your current device does not have these sensors, please click <strong>Cancel</strong>, and resume this registration on a compatible device (e.g., your smartphone or a modern laptop) by simply logging in.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ p: 3 }}>
-          <Button onClick={handleCancelDisclaimer} color="inherit">
-            Cancel & Terminate
-          </Button>
-          <Button onClick={handleAgreeDisclaimer} variant="contained" color="error" size="large">
-            I Agree, I Have A Fingerprint Sensor
-          </Button>
-        </DialogActions>
-      </Dialog>
+        {/* Custom Disclaimer Modal */}
+        {disclaimerOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden">
+              <div className="p-6 border-b border-zinc-800">
+                <h2 className="text-xl font-bold text-red-500 flex items-center gap-2">
+                  ⚠️ Strict Hardware Requirements
+                </h2>
+              </div>
+              <div className="p-6 text-zinc-300 text-sm flex flex-col gap-4">
+                <p>
+                  To proceed with registration, this device <strong>MUST</strong> be equipped with a hardware <strong>Fingerprint Sensor</strong> and a <strong>Camera</strong>.
+                </p>
+                <p>
+                  If your current device does not have these sensors, please click <strong>Cancel</strong>, and resume this registration on a compatible device (e.g., your smartphone or a modern laptop) by simply logging in.
+                </p>
+              </div>
+              <div className="p-4 border-t border-zinc-800 bg-zinc-900/50 flex justify-end gap-3">
+                <button
+                  onClick={handleCancelDisclaimer}
+                  className="px-4 py-2 rounded-xl text-zinc-400 font-medium hover:text-white hover:bg-zinc-800 transition-colors"
+                >
+                  Cancel & Terminate
+                </button>
+                <button
+                  onClick={handleAgreeDisclaimer}
+                  className="px-4 py-2 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+                >
+                  I Agree, I Have Sensors
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </AnimatedAuthLayout>
   );
 }

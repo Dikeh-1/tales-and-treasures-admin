@@ -3,20 +3,8 @@ import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../store/AuthContext';
 import {
   Box,
-  Button,
-  TextField,
-  Typography,
-  Alert,
   CircularProgress,
-  Link,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  InputAdornment,
-  IconButton,
 } from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import apiClient from '../api/apiClient';
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser';
 import { Fingerprint, ShieldCheck, UserPlus, KeyRound, ScanFace } from 'lucide-react';
@@ -353,7 +341,7 @@ export default function LoginPage() {
       showPassword={showPassword}
       isTyping={isTyping}
     >
-      <Box sx={{ position: 'relative', width: '100%' }}>
+      <div className="relative w-full">
         {loading && (
           <LoadingOverlay
             message={
@@ -369,203 +357,193 @@ export default function LoginPage() {
         )}
 
         {successMessage && (
-          <Alert severity="success" sx={{ mb: 3 }}>
+          <div className="rounded-xl border border-emerald-900/50 bg-emerald-950/20 p-4 text-sm text-emerald-400 mb-6">
             {successMessage}
-          </Alert>
+          </div>
         )}
 
-        <Box
-          component="form"
+        <form
           noValidate
           autoComplete="off"
           onSubmit={(event) => {
             event.preventDefault();
             void handlePrimaryAction();
           }}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 3
-          }}
+          className="flex flex-col gap-4 w-full"
         >
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="new-password"
-            inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-            autoFocus={authMode !== 'verifyDevice'}
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            onFocus={() => setIsTyping(true)}
-            onBlur={() => setIsTyping(false)}
-            disabled={authMode === 'verifyDevice' || loading}
-          />
-
-          {authMode === 'login' && !needsBiometricSetup && (
-            <TextField
-              margin="normal"
+          <div className="flex flex-col gap-2">
+            <label htmlFor="email" className="text-sm font-medium text-zinc-300">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              autoComplete="email"
               required
-              fullWidth
-              id="password"
-              label="Password"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              autoFocus={authMode !== 'verifyDevice'}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               onFocus={() => setIsTyping(true)}
               onBlur={() => setIsTyping(false)}
-              disabled={loading}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              disabled={authMode === 'verifyDevice' || loading}
+              className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
             />
+          </div>
+
+          {authMode === 'login' && !needsBiometricSetup && (
+            <div className="flex flex-col gap-2">
+              <label htmlFor="password" className="text-sm font-medium text-zinc-300">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  onFocus={() => setIsTyping(true)}
+                  onBlur={() => setIsTyping(false)}
+                  disabled={loading}
+                  className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 pl-4 pr-12 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
+                >
+                  {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                </button>
+              </div>
+            </div>
           )}
 
           {authMode === 'verifyDevice' && (
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="code"
-              label="6-Digit Verification Code"
-              name="code"
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              autoFocus
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-              disabled={loading}
-            />
+            <div className="flex flex-col gap-2">
+              <label htmlFor="code" className="text-sm font-medium text-zinc-300">
+                6-Digit Verification Code
+              </label>
+              <input
+                id="code"
+                name="code"
+                autoComplete="one-time-code"
+                required
+                autoFocus
+                value={code}
+                onChange={(event) => setCode(event.target.value)}
+                onFocus={() => setIsTyping(true)}
+                onBlur={() => setIsTyping(false)}
+                disabled={loading}
+                className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all tracking-[0.5em] text-center text-xl font-mono"
+              />
+            </div>
           )}
 
           {error && (
-            <Alert severity="error">
+            <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-4 text-sm text-red-400">
               {error}
-            </Alert>
+            </div>
           )}
 
           {authMode === 'login' && !needsBiometricSetup && (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1, mb: 1 }}>
-              <Link component={RouterLink} to="/forgot-password" variant="body2" sx={{ fontWeight: 500 }}>
+            <div className="flex justify-between items-center text-sm mt-2">
+              <div className="flex items-center gap-2">
+                {/* Checkbox placeholder from image */}
+                <input type="checkbox" id="remember" className="rounded bg-zinc-950 border-zinc-800 checked:bg-white checked:text-zinc-900 size-4" />
+                <label htmlFor="remember" className="text-zinc-400 cursor-pointer hover:text-zinc-300">Remember for 30 days</label>
+              </div>
+              <RouterLink to="/forgot-password" className="font-medium text-zinc-300 hover:text-white transition-colors">
                 Forgot password?
-              </Link>
-            </Box>
+              </RouterLink>
+            </div>
           )}
 
-          <Button
+          <button
             type="submit"
-            fullWidth
-            variant="contained"
-            size="large"
             disabled={loading}
-            startIcon={buttonIcon}
-            sx={{ py: 1.5, mt: 1 }}
+            className="h-12 w-full rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : buttonLabel}
-          </Button>
+            {loading ? <CircularProgress size={20} color="inherit" /> : (
+              <>
+                {buttonLabel}
+              </>
+            )}
+          </button>
 
           {authMode === 'verifyDevice' && (
-            <Button
+            <button
+              type="button"
               onClick={() => void handleResendDeviceCode()}
-              fullWidth
-              variant="outlined"
               disabled={resendDisabled || loading}
-              sx={{ py: 1, mt: 1 }}
+              className="h-12 w-full rounded-xl border border-zinc-800 bg-transparent text-zinc-300 font-medium hover:bg-zinc-900 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {resendDisabled ? `Resend Code in ${countdown}s` : 'Request New Code'}
-            </Button>
+            </button>
           )}
 
           {authMode === 'login' && !needsBiometricSetup && (
-            <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Typography align="center" variant="overline" sx={{ color: 'text.secondary' }}>
+            <div className="flex flex-col gap-3 mt-4">
+              <div className="flex items-center gap-4 before:h-px before:flex-1 before:bg-zinc-800 after:h-px after:flex-1 after:bg-zinc-800 text-zinc-500 text-xs font-medium uppercase tracking-wider">
                 Quick Sign In
-              </Typography>
+              </div>
               
-              <Button
-                onClick={() => void handleBiometricLogin('fingerprint')}
-                fullWidth
-                variant="outlined"
-                size="large"
-                disabled={loading}
-                startIcon={<Fingerprint />}
-              >
-                Sign in with Fingerprint
-              </Button>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => void handleBiometricLogin('fingerprint')}
+                  disabled={loading}
+                  className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 text-zinc-300 font-medium hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Fingerprint size={18} /> Fingerprint
+                </button>
 
-              <Button
-                onClick={() => {
-                  const normalizedEmail = normalizeEmail(email);
-                  if (!normalizedEmail) {
-                    setError('Please enter your email first to use Face Capture.');
-                    return;
-                  }
-                  setError('');
-                  setIsCapturingFace(true);
-                }}
-                fullWidth
-                variant="outlined"
-                size="large"
-                disabled={loading}
-                startIcon={<ScanFace />}
-              >
-                Sign in with Face Capture
-              </Button>
-            </Box>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const normalizedEmail = normalizeEmail(email);
+                    if (!normalizedEmail) {
+                      setError('Please enter your email first to use Face Capture.');
+                      return;
+                    }
+                    setError('');
+                    setIsCapturingFace(true);
+                  }}
+                  disabled={loading}
+                  className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 text-zinc-300 font-medium hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ScanFace size={18} /> Face Capture
+                </button>
+              </div>
+            </div>
           )}
 
           {!needsBiometricSetup && (
-            <Typography variant="body2" align="center" sx={{ mt: 3, color: 'text.secondary' }}>
-              First time here?{' '}
-              <Link component={RouterLink} to="/register" variant="body2" sx={{ fontWeight: 600 }}>
-                Register a new admin account.
-              </Link>
-            </Typography>
+            <div className="text-center text-sm text-zinc-400 mt-4">
+              Don't have an account?{' '}
+              <RouterLink to="/register" className="font-semibold text-white hover:underline">
+                Sign Up
+              </RouterLink>
+            </div>
           )}
-        </Box>
-      </Box>
+        </form>
+      </div>
 
-      <Dialog 
-        open={isCapturingFace} 
-        onClose={() => setIsCapturingFace(false)}
-        maxWidth="xs"
-        fullWidth
-        PaperProps={{
-          style: {
-            backgroundColor: 'rgba(10, 10, 20, 0.95)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(0, 212, 255, 0.2)',
-            boxShadow: '0 0 40px rgba(0, 212, 255, 0.1)',
-            padding: '20px'
-          }
-        }}
-      >
-        <DialogTitle align="center" sx={{ color: 'white', mb: 2 }}>
-          Face Login Verification
-        </DialogTitle>
-        <DialogContent>
-          {isCapturingFace && (
+      {isCapturingFace && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-sm bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden p-6">
+            <h2 className="text-xl font-bold text-white text-center mb-4">
+              Face Login Verification
+            </h2>
             <FaceCapture 
               onCapture={handleFaceLogin} 
               onCancel={() => setIsCapturingFace(false)} 
             />
-          )}
-        </DialogContent>
-      </Dialog>
+          </div>
+        </div>
+      )}
     </AnimatedAuthLayout>
   );
 }

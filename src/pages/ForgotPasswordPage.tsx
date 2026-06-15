@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Alert,
   CircularProgress,
-  Link,
-  InputAdornment,
-  IconButton,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -129,117 +121,115 @@ export default function ForgotPasswordPage() {
         </Link>
 
         {step === 'request' ? (
-          <Box
-            component="form"
+          <form
             noValidate
             autoComplete="off"
             onSubmit={handleSendResetCode}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 3
-            }}
+            className="flex flex-col gap-4 w-full"
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              autoFocus
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-              disabled={sendingResetCode}
-            />
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="text-sm font-medium text-zinc-300">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                autoComplete="email"
+                required
+                autoFocus
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                onFocus={() => setIsTyping(true)}
+                onBlur={() => setIsTyping(false)}
+                disabled={sendingResetCode}
+                className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+              />
+            </div>
 
-            <Button
+            <button
               type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
               disabled={sendingResetCode}
-              sx={{ py: 1.5, mt: 1 }}
+              className="h-12 w-full rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {sendingResetCode ? <CircularProgress size={24} color="inherit" /> : 'Send Reset Code'}
-            </Button>
-          </Box>
+              {sendingResetCode ? <CircularProgress size={20} color="inherit" /> : 'Send Reset Code'}
+            </button>
+          </form>
         ) : (
-          <Box
-            component="form"
+          <form
             noValidate
             autoComplete="off"
             onSubmit={handleResetPassword}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 3
-            }}
+            className="flex flex-col gap-4 w-full"
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Reset Code"
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              value={resetCode}
-              onChange={(event) => setResetCode(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="New Password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              value={newPassword}
-              onChange={(event) => setNewPassword(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Confirm New Password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              inputProps={{ autoComplete: 'new-password', form: { autoComplete: 'off' } }}
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              onFocus={() => setIsTyping(true)}
-              onBlur={() => setIsTyping(false)}
-            />
+            <div className="flex flex-col gap-2">
+              <label htmlFor="code" className="text-sm font-medium text-zinc-300">
+                Reset Code
+              </label>
+              <input
+                id="code"
+                name="code"
+                required
+                autoFocus
+                value={resetCode}
+                onChange={(event) => setResetCode(event.target.value)}
+                onFocus={() => setIsTyping(true)}
+                onBlur={() => setIsTyping(false)}
+                className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all tracking-[0.5em] text-center text-xl font-mono"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="newPassword" className="text-sm font-medium text-zinc-300">
+                New Password
+              </label>
+              <div className="relative">
+                <input
+                  id="newPassword"
+                  name="newPassword"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                  onFocus={() => setIsTyping(true)}
+                  onBlur={() => setIsTyping(false)}
+                  className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 pl-4 pr-12 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
+                >
+                  {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium text-zinc-300">
+                Confirm New Password
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                onFocus={() => setIsTyping(true)}
+                onBlur={() => setIsTyping(false)}
+                className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+              />
+            </div>
             
-            <Button
+            <button
               type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
               disabled={resettingPassword}
-              sx={{ py: 1.5, mt: 1 }}
+              className="h-12 w-full rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {resettingPassword ? <CircularProgress size={24} color="inherit" /> : 'Reset Password'}
-            </Button>
-          </Box>
+              {resettingPassword ? <CircularProgress size={20} color="inherit" /> : 'Reset Password'}
+            </button>
+          </form>
         )}
       </Box>
     </AnimatedAuthLayout>
