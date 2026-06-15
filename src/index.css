@@ -1,7 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+@theme {
+  --color-primary-main: #00d4ff;
+}
 @layer base {
   /* Override browser autofill styles */
   input:-webkit-autofill,
