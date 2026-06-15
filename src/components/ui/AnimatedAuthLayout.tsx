@@ -317,7 +317,7 @@ export default function AnimatedAuthLayout({
   return (
     <div className="h-[100dvh] w-full overflow-hidden grid md:grid-cols-2 bg-[#0A0A0B]">
       {/* Left Content Section */}
-      <div className="relative hidden md:flex flex-col justify-between bg-[#E4E4E7] p-8 overflow-hidden">
+      <div className="relative hidden md:flex flex-col justify-between bg-[#E4E4E7] p-8 pb-0 overflow-hidden">
         <div className="relative z-20 shrink-0">
           <div className="flex items-center">
             <div className="h-16 lg:h-20 flex items-center justify-center overflow-hidden">
