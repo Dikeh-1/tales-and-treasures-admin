@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import apiClient from '../api/apiClient';
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser';
-import { Fingerprint, ShieldCheck, UserPlus, KeyRound, ScanFace } from 'lucide-react';
+import { Fingerprint, ShieldCheck, UserPlus, KeyRound, ScanFace, Eye, EyeOff } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
 import FaceCapture from '../components/FaceCapture';
 import { toast } from 'react-hot-toast';
@@ -415,7 +415,7 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
                 >
-                  {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>

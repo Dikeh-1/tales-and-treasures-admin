@@ -3,12 +3,11 @@ import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
   CircularProgress,
 } from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+// Removed MUI visibility
 import apiClient from '../api/apiClient';
 import { toast } from 'react-hot-toast';
 import AnimatedAuthLayout from '../components/ui/AnimatedAuthLayout';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 function normalizeEmail(value: string) {
   return value.trim().toLowerCase();
@@ -110,15 +109,13 @@ export default function ForgotPasswordPage() {
       showPassword={showPassword}
       isTyping={isTyping}
     >
-      <Box sx={{ position: 'relative', width: '100%' }}>
-        <Link 
-          component={RouterLink} 
+      <div className="relative w-full">
+        <RouterLink 
           to="/login" 
-          variant="body2" 
-          sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 4, fontWeight: 500, color: 'text.secondary', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
+          className="flex items-center gap-1 mb-6 font-medium text-zinc-400 hover:text-white transition-colors text-sm"
         >
           <ArrowLeft size={16} /> Back to login
-        </Link>
+        </RouterLink>
 
         {step === 'request' ? (
           <form
@@ -200,7 +197,7 @@ export default function ForgotPasswordPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
                 >
-                  {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
@@ -231,7 +228,7 @@ export default function ForgotPasswordPage() {
             </button>
           </form>
         )}
-      </Box>
+      </div>
     </AnimatedAuthLayout>
   );
 }

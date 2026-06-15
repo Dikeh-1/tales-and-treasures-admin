@@ -3,13 +3,12 @@ import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   CircularProgress,
 } from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+// Removed MUI visibility
 import { toast } from 'react-hot-toast';
 import apiClient from '../api/apiClient';
 import { startRegistration } from '@simplewebauthn/browser';
 import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/types';
-import { Fingerprint, CheckCircle, ScanFace } from 'lucide-react';
+import { Fingerprint, CheckCircle, ScanFace, Eye, EyeOff } from 'lucide-react';
 import '../styles/AuthPages.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 import FaceCapture from '../components/FaceCapture';
@@ -224,30 +223,38 @@ export default function RegistrationPage(): JSX.Element {
       showPassword={showPassword}
       isTyping={isTyping}
     >
-      <Box sx={{ position: 'relative', width: '100%' }}>
+      <div className="relative w-full">
         {loading && <LoadingOverlay message={overlayMessage} />}
 
         {activeStep < 4 && (
-          <Stepper
-            activeStep={activeStep}
-            className="auth-stepper"
-            sx={{
-              pt: 2,
-              pb: 4,
-              flexWrap: 'wrap',
-              gap: { xs: 1, sm: 2 },
-              '& .MuiStepLabel-label': {
-                fontSize: { xs: '0.75rem', sm: '0.9rem' },
-                textAlign: 'center',
-              },
-            }}
-          >
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
+          <div className="flex flex-wrap justify-center gap-2 pt-2 pb-8">
+            {steps.map((label, index) => (
+              <div 
+                key={label}
+                className={`flex items-center gap-2 text-sm font-medium ${
+                  index === activeStep 
+                    ? 'text-white' 
+                    : index < activeStep 
+                      ? 'text-zinc-500' 
+                      : 'text-zinc-700'
+                }`}
+              >
+                <div className={`flex items-center justify-center size-6 rounded-full text-xs ${
+                  index === activeStep 
+                    ? 'bg-zinc-100 text-zinc-900' 
+                    : index < activeStep 
+                      ? 'bg-zinc-800 text-zinc-400' 
+                      : 'bg-zinc-900 text-zinc-600 border border-zinc-800'
+                }`}>
+                  {index + 1}
+                </div>
+                <span className="hidden sm:inline">{label}</span>
+                {index < steps.length - 1 && (
+                  <div className={`h-[1px] w-4 sm:w-8 ${index < activeStep ? 'bg-zinc-700' : 'bg-zinc-800'}`} />
+                )}
+              </div>
             ))}
-          </Stepper>
+          </div>
         )}
 
         {activeStep === 0 && (
@@ -317,7 +324,7 @@ export default function RegistrationPage(): JSX.Element {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
                 >
-                  {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               <p className="text-xs text-zinc-500">At least 8 characters with letters and numbers.</p>
@@ -344,7 +351,7 @@ export default function RegistrationPage(): JSX.Element {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
                 >
-                  {showConfirmPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
