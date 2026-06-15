@@ -17,12 +17,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
+import PhoneIcon from '@mui/icons-material/Phone';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 interface Message {
   id: number;
   name: string;
   email: string;
+  phone?: string;
   subject: string;
   message: string;
   createdAt: string;
@@ -100,11 +102,21 @@ export default function MessageViewModal({ open, onClose, message, onDelete }: M
                     <Typography variant="subtitle1" fontWeight={600}>
                         {message.name}
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
-                        <EmailIcon sx={{ fontSize: 14 }} />
-                        <Typography variant="caption">
-                            {message.email}
-                        </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', color: 'text.secondary', mt: 0.5 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <EmailIcon sx={{ fontSize: 14 }} />
+                            <Typography variant="caption">
+                                {message.email}
+                            </Typography>
+                        </Box>
+                        {message.phone && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <PhoneIcon sx={{ fontSize: 14 }} />
+                                <Typography variant="caption">
+                                    {message.phone}
+                                </Typography>
+                            </Box>
+                        )}
                     </Box>
                 </Box>
             </Box>
