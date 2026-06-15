@@ -227,8 +227,7 @@ export default function RegistrationPage(): JSX.Element {
         {loading && <LoadingOverlay message={overlayMessage} />}
 
         {activeStep < 4 && (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between mb-4 relative z-10 px-2">
+          <div className="flex flex-wrap justify-center gap-2 pt-2 pb-8">
             {steps.map((label, index) => (
               <div 
                 key={label}
@@ -266,9 +265,9 @@ export default function RegistrationPage(): JSX.Element {
               event.preventDefault();
               void handleInitiateRegistration();
             }}
-            className="flex flex-col gap-3 w-full"
+            className="flex flex-col gap-4 w-full"
           >
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <label htmlFor="name" className="text-sm font-medium text-zinc-300">
                 Full Name
               </label>
@@ -282,11 +281,11 @@ export default function RegistrationPage(): JSX.Element {
                 onChange={(event) => setName(event.target.value)}
                 onFocus={() => setIsTyping(true)}
                 onBlur={() => setIsTyping(false)}
-                className="h-11 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+                className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
               />
             </div>
             
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <label htmlFor="email" className="text-sm font-medium text-zinc-300">
                 Email Address
               </label>
@@ -300,11 +299,11 @@ export default function RegistrationPage(): JSX.Element {
                 onChange={(event) => setEmail(event.target.value)}
                 onFocus={() => setIsTyping(true)}
                 onBlur={() => setIsTyping(false)}
-                className="h-11 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+                className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
               />
             </div>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <label htmlFor="password" className="text-sm font-medium text-zinc-300">
                 Password
               </label>
@@ -318,7 +317,7 @@ export default function RegistrationPage(): JSX.Element {
                   onChange={(event) => setPassword(event.target.value)}
                   onFocus={() => setIsTyping(true)}
                   onBlur={() => setIsTyping(false)}
-                  className="h-11 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 pl-4 pr-12 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+                  className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 pl-4 pr-12 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
                 />
                 <button
                   type="button"
@@ -331,7 +330,7 @@ export default function RegistrationPage(): JSX.Element {
               <p className="text-xs text-zinc-500">At least 8 characters with letters and numbers.</p>
             </div>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <label htmlFor="confirmPassword" className="text-sm font-medium text-zinc-300">
                 Confirm Password
               </label>
@@ -345,7 +344,7 @@ export default function RegistrationPage(): JSX.Element {
                   onChange={(event) => setConfirmPassword(event.target.value)}
                   onFocus={() => setIsTyping(true)}
                   onBlur={() => setIsTyping(false)}
-                  className="h-11 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 pl-4 pr-12 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
+                  className="h-12 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 pl-4 pr-12 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-700 outline-none transition-all"
                 />
                 <button
                   type="button"
@@ -366,7 +365,7 @@ export default function RegistrationPage(): JSX.Element {
             <button
               type="submit"
               disabled={loading}
-              className="h-11 w-full rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-12 w-full rounded-xl bg-zinc-100 text-zinc-900 font-medium hover:bg-zinc-200 transition-colors mt-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? <CircularProgress size={20} color="inherit" /> : 'Continue Setup'}
             </button>
@@ -499,7 +498,7 @@ export default function RegistrationPage(): JSX.Element {
         )}
 
         {activeStep < 4 && (
-          <div className="text-center text-sm text-zinc-400 mt-4 mb-2">
+          <div className="text-center text-sm text-zinc-400 mt-6 mb-4">
             Already have an account?{' '}
             <RouterLink to="/login" className="font-semibold text-white hover:underline">
               Sign In

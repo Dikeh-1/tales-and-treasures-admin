@@ -10,7 +10,9 @@ const QUOTES = [
   { text: "Knowledge is power. Information is liberating. Education is the premise of progress, in every society, in every family.", author: "Kofi Annan" },
   { text: "Live as if you were to die tomorrow. Learn as if you were to live forever.", author: "Mahatma Gandhi" },
   { text: "An investment in knowledge pays the best interest.", author: "Benjamin Franklin" },
-  { text: "The function of education is to teach one to think intensively and to think critically.", author: "Martin Luther King Jr." }
+  { text: "The function of education is to teach one to think intensively and to think critically.", author: "Martin Luther King Jr." },
+  { text: "Reading is important. If you know how to read, then the whole world opens up to you.", author: "Barack Obama" },
+  { text: "The best anti-poverty program is a world-class education.", author: "Barack Obama" }
 ];
 
 interface PupilProps {
@@ -325,7 +327,7 @@ export default function AnimatedAuthLayout({
         </div>
 
         {/* Shuffling Quotes Section */}
-        <div className="relative z-20 flex flex-col items-center justify-center px-4 lg:px-12 text-center my-4 lg:my-8 min-h-[120px] shrink-0">
+        <div className="relative z-20 flex flex-col items-center justify-center px-4 lg:px-12 text-center my-4 lg:my-8 min-h-[100px] shrink-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={quoteIndex}
@@ -334,24 +336,24 @@ export default function AnimatedAuthLayout({
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
             >
-              <p className="text-xl lg:text-3xl font-serif text-slate-800 italic leading-relaxed mb-4 lg:mb-6 font-medium">
+              <p className="text-lg lg:text-2xl font-serif text-slate-800 italic leading-relaxed mb-3 lg:mb-4 font-medium">
                 "{QUOTES[quoteIndex].text}"
               </p>
-              <p className="text-xs lg:text-base font-bold text-slate-500 uppercase tracking-[0.2em]">
+              <p className="text-xs lg:text-sm font-bold text-slate-500 uppercase tracking-[0.2em]">
                 — {QUOTES[quoteIndex].author}
               </p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="relative z-20 flex-1 flex items-end justify-center min-h-0 w-full overflow-hidden">
+        <div className="relative z-20 flex-1 flex items-end justify-center min-h-0 w-full">
           {/* Cartoon Characters */}
           <div 
             className="relative origin-bottom" 
             style={{ 
               width: '550px', 
               height: '400px',
-              transform: 'scale(min(1, calc((100vh - 350px) / 400)))'
+              transform: 'scale(min(1, calc((100vh - 350px) / 450)))'
             }}
           >
             {/* Purple tall rectangle character */}
