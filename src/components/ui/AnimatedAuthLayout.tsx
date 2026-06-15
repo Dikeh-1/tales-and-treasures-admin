@@ -352,7 +352,7 @@ export default function AnimatedAuthLayout({
             className="relative origin-bottom" 
             style={{ 
               width: '550px', 
-              height: '400px',
+              height: '450px',
               transform: 'scale(min(1, calc((100vh - 350px) / 450)))'
             }}
           >
