@@ -18,6 +18,7 @@ import {
   ListItemText,
   CssBaseline,
   IconButton,
+  Button,
   Divider,
   Badge,
   Alert,
@@ -533,11 +534,25 @@ export default function DashboardLayout() {
           <Box sx={{ flexGrow: 1 }} />
 
           <Stack direction="row" spacing={2} alignItems="center">
-            <Tooltip title="Refresh Data">
-              <IconButton color="inherit" onClick={() => window.location.reload()}>
-                <RefreshIcon />
-              </IconButton>
-            </Tooltip>
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<RefreshIcon />}
+              onClick={() => window.location.reload()}
+              sx={{
+                textTransform: 'none',
+                borderRadius: 4,
+                px: 2,
+                fontWeight: 600,
+                borderColor: alpha(theme.palette.primary.main, 0.5),
+                '&:hover': {
+                  borderColor: theme.palette.primary.main,
+                  bgcolor: alpha(theme.palette.primary.main, 0.1),
+                }
+              }}
+            >
+              {!isMobile && "Refresh Data"}
+            </Button>
 
             <IconButton color="inherit" onClick={toggleColorMode}>
               {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
