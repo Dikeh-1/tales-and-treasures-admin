@@ -12,7 +12,7 @@ export default {
     },
   },
   corePlugins: {
-    preflight: false, // Prevent Tailwind from overriding MUI's base styles
+    preflight: true,
   },
   plugins: [],
 }

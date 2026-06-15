@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Sparkles } from "lucide-react";
 
 interface PupilProps {
   size?: number;
@@ -293,13 +292,13 @@ export default function AnimatedAuthLayout({
   const orangePos = calculatePosition(orangeRef);
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-[#0A0A0B]">
+    <div className="min-h-screen grid md:grid-cols-2 bg-[#0A0A0B]">
       {/* Left Content Section */}
-      <div className="relative hidden lg:flex flex-col justify-between bg-[#E4E4E7] p-12 overflow-hidden">
+      <div className="relative hidden md:flex flex-col justify-between bg-[#E4E4E7] p-8 overflow-hidden">
         <div className="relative z-20">
           <div className="flex items-center gap-2 text-xl font-bold tracking-wider text-slate-900">
-            <div className="size-10 rounded-lg bg-black/5 flex items-center justify-center">
-              <Sparkles className="size-5" />
+            <div className="size-10 rounded-lg flex items-center justify-center overflow-hidden">
+              <img src="/apple-touch-icon.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <span>TALES & TREASURES</span>
           </div>
@@ -493,9 +492,9 @@ export default function AnimatedAuthLayout({
       <div className="flex items-center justify-center p-8 relative overflow-y-auto w-full text-zinc-100">
         <div className="w-full max-w-[400px]">
           {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center justify-center gap-2 text-lg font-bold mb-12">
-            <div className="size-10 rounded-lg bg-zinc-800 flex items-center justify-center">
-              <Sparkles className="size-5 text-zinc-100" />
+          <div className="md:hidden flex items-center justify-center gap-2 text-lg font-bold mb-12">
+            <div className="size-10 rounded-lg flex items-center justify-center overflow-hidden">
+              <img src="/apple-touch-icon.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <span>TALES & TREASURES</span>
           </div>
