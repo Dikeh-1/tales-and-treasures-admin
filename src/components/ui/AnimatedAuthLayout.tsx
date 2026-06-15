@@ -313,19 +313,19 @@ export default function AnimatedAuthLayout({
   const orangePos = calculatePosition(orangeRef);
 
   return (
-    <div className="min-h-screen grid md:grid-cols-2 bg-[#0A0A0B]">
+    <div className="h-[100dvh] w-full overflow-hidden grid md:grid-cols-2 bg-[#0A0A0B]">
       {/* Left Content Section */}
       <div className="relative hidden md:flex flex-col justify-between bg-[#E4E4E7] p-8 overflow-hidden">
-        <div className="relative z-20">
+        <div className="relative z-20 shrink-0">
           <div className="flex items-center">
-            <div className="h-20 flex items-center justify-center overflow-hidden">
+            <div className="h-16 lg:h-20 flex items-center justify-center overflow-hidden">
               <img src="/apple-touch-icon.png" alt="Tales & Treasures Logo" className="h-full object-contain" />
             </div>
           </div>
         </div>
 
         {/* Shuffling Quotes Section */}
-        <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-12 text-center my-8">
+        <div className="relative z-20 flex flex-col items-center justify-center px-4 lg:px-12 text-center my-4 lg:my-8 min-h-[120px] shrink-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={quoteIndex}
@@ -334,19 +334,26 @@ export default function AnimatedAuthLayout({
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
             >
-              <p className="text-2xl md:text-3xl font-serif text-slate-800 italic leading-relaxed mb-6 font-medium">
+              <p className="text-xl lg:text-3xl font-serif text-slate-800 italic leading-relaxed mb-4 lg:mb-6 font-medium">
                 "{QUOTES[quoteIndex].text}"
               </p>
-              <p className="text-sm md:text-base font-bold text-slate-500 uppercase tracking-[0.2em]">
+              <p className="text-xs lg:text-base font-bold text-slate-500 uppercase tracking-[0.2em]">
                 — {QUOTES[quoteIndex].author}
               </p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="relative z-20 flex items-end justify-center h-[500px]">
+        <div className="relative z-20 flex-1 flex items-end justify-center min-h-0 w-full overflow-hidden">
           {/* Cartoon Characters */}
-          <div className="relative" style={{ width: '550px', height: '400px' }}>
+          <div 
+            className="relative origin-bottom" 
+            style={{ 
+              width: '550px', 
+              height: '400px',
+              transform: 'scale(min(1, calc((100vh - 350px) / 400)))'
+            }}
+          >
             {/* Purple tall rectangle character */}
             <div 
               ref={purpleRef}
