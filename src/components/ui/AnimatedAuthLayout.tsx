@@ -1,4 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const QUOTES = [
+  { text: "Education is the most powerful weapon which you can use to change the world.", author: "Nelson Mandela" },
+  { text: "The beautiful thing about learning is that no one can take it away from you.", author: "B.B. King" },
+  { text: "Education is not the filling of a pail, but the lighting of a fire.", author: "W.B. Yeats" },
+  { text: "The roots of education are bitter, but the fruit is sweet.", author: "Aristotle" },
+  { text: "Children must be taught how to think, not what to think.", author: "Margaret Mead" },
+  { text: "Knowledge is power. Information is liberating. Education is the premise of progress, in every society, in every family.", author: "Kofi Annan" },
+  { text: "Live as if you were to die tomorrow. Learn as if you were to live forever.", author: "Mahatma Gandhi" },
+  { text: "An investment in knowledge pays the best interest.", author: "Benjamin Franklin" },
+  { text: "The function of education is to teach one to think intensively and to think critically.", author: "Martin Luther King Jr." }
+];
 
 interface PupilProps {
   size?: number;
@@ -183,6 +196,7 @@ export default function AnimatedAuthLayout({
   const [isBlackBlinking, setIsBlackBlinking] = useState(false);
   const [isLookingAtEachOther, setIsLookingAtEachOther] = useState(false);
   const [isPurplePeeking, setIsPurplePeeking] = useState(false);
+  const [quoteIndex, setQuoteIndex] = useState(0);
   
   const purpleRef = useRef<HTMLDivElement>(null);
   const blackRef = useRef<HTMLDivElement>(null);
@@ -197,6 +211,13 @@ export default function AnimatedAuthLayout({
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setQuoteIndex(prev => (prev + 1) % QUOTES.length);
+    }, 10000);
+    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -301,6 +322,26 @@ export default function AnimatedAuthLayout({
               <img src="/apple-touch-icon.png" alt="Tales & Treasures Logo" className="h-full object-contain" />
             </div>
           </div>
+        </div>
+
+        {/* Shuffling Quotes Section */}
+        <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-12 text-center my-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={quoteIndex}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            >
+              <p className="text-2xl md:text-3xl font-serif text-slate-800 italic leading-relaxed mb-6 font-medium">
+                "{QUOTES[quoteIndex].text}"
+              </p>
+              <p className="text-sm md:text-base font-bold text-slate-500 uppercase tracking-[0.2em]">
+                — {QUOTES[quoteIndex].author}
+              </p>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         <div className="relative z-20 flex items-end justify-center h-[500px]">
