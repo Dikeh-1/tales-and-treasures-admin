@@ -205,7 +205,12 @@ export default function StoryBridgePage() {
             loading={loading}
             slots={{ toolbar: GridToolbar }} // Added toolbar for better UX
             slotProps={{ toolbar: { showQuickFilter: true } }}
-            autoPageSize
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 20 },
+              },
+            }}
+            pageSizeOptions={[5, 10, 20, 50, 100]}
             disableRowSelectionOnClick
           />
         </Box>
