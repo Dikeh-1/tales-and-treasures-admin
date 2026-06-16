@@ -623,7 +623,7 @@ export default function BookClubPage() {
                     <Typography variant="subtitle2" gutterBottom fontWeight="600" color="text.secondary">
                       Slot {index + 1}
                     </Typography>
-                    <Box sx={{ height: 200, mb: 2 }}>
+                    <Box sx={{ mb: 2 }}>
                       <ImageUpload
                         label={`Image ${index + 1}`}
                         onFileSelect={(file) => handleHeroImageChange(index, file)}

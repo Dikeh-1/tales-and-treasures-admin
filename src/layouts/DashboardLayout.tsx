@@ -152,6 +152,8 @@ export default function DashboardLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  const [refreshKey, setRefreshKey] = useState(0);
+
   // Refs & State for Logic
   const hasPlayedLoginSound = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -538,7 +540,7 @@ export default function DashboardLayout() {
               variant="outlined"
               color="primary"
               startIcon={<RefreshIcon />}
-              onClick={() => window.location.reload()}
+              onClick={() => setRefreshKey(prev => prev + 1)}
               sx={{
                 textTransform: 'none',
                 borderRadius: 4,
@@ -700,7 +702,9 @@ export default function DashboardLayout() {
           </Alert>
         )}
         
-        <Outlet />
+        <Box key={refreshKey}>
+          <Outlet />
+        </Box>
       </Box>
 
       <InactivityWarningModal open={warningModalOpen} onLogout={handleLogout} onStayLoggedIn={stayLoggedIn} />
