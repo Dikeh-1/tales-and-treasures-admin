@@ -109,7 +109,7 @@ export default function ImageUpload({ label, onFileSelect, existingImageUrl, mul
             sx={{
               width: '100%',
               maxHeight: 280,
-              objectFit: 'cover',
+              objectFit: 'contain',
               display: 'block',
             }}
           />
